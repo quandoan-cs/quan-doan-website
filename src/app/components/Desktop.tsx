@@ -1,5 +1,8 @@
 'use client';
 
+import { useState } from 'react';
+import ContextMenu from './ContextMenu';
+
 interface DesktopProps {
   onIconClick: (type: string, title: string) => void;
 }
@@ -13,6 +16,8 @@ interface DesktopIcon {
 }
 
 const Desktop = ({ onIconClick }: DesktopProps) => {
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
+
   const icons: DesktopIcon[] = [
     { type: 'about', title: 'About Me', icon: '👤', x: 50, y: 50 },
     { type: 'resume', title: 'Resume', icon: '📄', x: 150, y: 50 },
@@ -20,15 +25,44 @@ const Desktop = ({ onIconClick }: DesktopProps) => {
     { type: 'contact', title: 'Contact', icon: '📧', x: 350, y: 50 },
   ];
 
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setContextMenu({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleContextMenuAction = (action: string) => {
+    switch (action) {
+      case 'refresh':
+        window.location.reload();
+        break;
+      case 'properties':
+        onIconClick('settings', 'Settings');
+        break;
+      case 'new':
+        // Could add new file/folder functionality
+        break;
+      case 'arrange':
+        // Could add icon arrangement functionality
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
-    <div className="h-screen w-screen relative" style={{ 
-      background: 'linear-gradient(45deg, #008080 0%, #004040 100%)',
-      backgroundImage: `
-        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
-        radial-gradient(circle at 40% 60%, rgba(255,255,255,0.05) 0%, transparent 50%)
-      `
-    }}>
+    <div 
+      className="h-screen w-screen relative xp-desktop-loading" 
+      style={{ 
+        background: 'linear-gradient(45deg, #008080 0%, #004040 100%)',
+        backgroundImage: `
+          radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+          radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+          radial-gradient(circle at 40% 60%, rgba(255,255,255,0.05) 0%, transparent 50%)
+        `
+      }}
+      onContextMenu={handleContextMenu}
+      onClick={() => setContextMenu(null)}
+    >
       {/* Desktop Icons */}
       {icons.map((icon, index) => (
         <div
@@ -58,6 +92,16 @@ const Desktop = ({ onIconClick }: DesktopProps) => {
           backgroundSize: '20px 20px'
         }}
       />
+
+      {/* Context Menu */}
+      {contextMenu && (
+        <ContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          onClose={() => setContextMenu(null)}
+          onItemClick={handleContextMenuAction}
+        />
+      )}
     </div>
   );
 };
