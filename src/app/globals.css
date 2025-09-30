@@ -2,21 +2,354 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom CSS variables */
+/* Windows XP Color Scheme */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --xp-blue: #0054e3;
+  --xp-light-blue: #316ac5;
+  --xp-dark-blue: #003399;
+  --xp-gray: #c0c0c0;
+  --xp-dark-gray: #808080;
+  --xp-light-gray: #e1e1e1;
+  --xp-white: #ffffff;
+  --xp-black: #000000;
+  --xp-taskbar: #c0c0c0;
+  --xp-start-button: linear-gradient(to bottom, #316ac5 0%, #1f4f8a 100%);
+  --xp-window-bg: #f0f0f0;
+  --xp-window-border: #808080;
+  --xp-titlebar: linear-gradient(to bottom, #316ac5 0%, #1f4f8a 100%);
+  --xp-titlebar-text: #ffffff;
+  --xp-desktop-bg: #008080;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  font-family: 'Tahoma', 'Arial', sans-serif;
+  font-size: 11px;
+  background: var(--xp-desktop-bg);
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Windows XP Scrollbar */
+::-webkit-scrollbar {
+  width: 16px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--xp-gray);
+  border: 1px solid var(--xp-dark-gray);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--xp-gray);
+  border: 1px solid var(--xp-dark-gray);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--xp-light-gray);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--xp-gray);
+}
+
+/* Windows XP Button Styles */
+.xp-button {
+  background: var(--xp-gray);
+  border: 1px solid var(--xp-dark-gray);
+  border-top-color: var(--xp-white);
+  border-left-color: var(--xp-white);
+  padding: 2px 8px;
+  font-size: 11px;
+  cursor: pointer;
+  outline: none;
+}
+
+.xp-button:hover {
+  background: var(--xp-light-gray);
+}
+
+.xp-button:active {
+  border-top-color: var(--xp-dark-gray);
+  border-left-color: var(--xp-dark-gray);
+  border-bottom-color: var(--xp-white);
+  border-right-color: var(--xp-white);
+}
+
+.xp-button:focus {
+  border: 1px dotted var(--xp-black);
+}
+
+/* Windows XP Window Styles */
+.xp-window {
+  border: 2px solid var(--xp-dark-gray);
+  border-top-color: var(--xp-white);
+  border-left-color: var(--xp-white);
+  background: var(--xp-window-bg);
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease-in-out;
+}
+
+.xp-window.minimized {
+  opacity: 0;
+  transform: scale(0.8);
+  pointer-events: none;
+}
+
+.xp-window.maximized {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: calc(100vh - 30px) !important;
+  z-index: 1000 !important;
+}
+
+.xp-titlebar {
+  background: var(--xp-titlebar);
+  color: var(--xp-titlebar-text);
+  padding: 2px 4px;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: move;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 18px;
+}
+
+.xp-window-content {
+  padding: 4px;
+  background: var(--xp-window-bg);
+  overflow: auto;
+}
+
+/* Windows XP Icon Styles */
+.xp-desktop-icon {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  padding: 4px;
+  border: 1px solid transparent;
+}
+
+.xp-desktop-icon:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--xp-white);
+}
+
+.xp-desktop-icon:active {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.xp-icon-image {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 4px;
+}
+
+.xp-icon-text {
+  font-size: 11px;
+  color: var(--xp-white);
+  text-align: center;
+  text-shadow: 1px 1px 1px var(--xp-black);
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+/* Windows XP Taskbar */
+.xp-taskbar {
+  background: var(--xp-taskbar);
+  border-top: 1px solid var(--xp-white);
+  height: 30px;
+  display: flex;
+  align-items: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.xp-start-button {
+  background: var(--xp-start-button);
+  border: 1px solid var(--xp-dark-gray);
+  border-top-color: var(--xp-white);
+  border-left-color: var(--xp-white);
+  color: var(--xp-white);
+  padding: 2px 8px;
+  margin: 2px;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  height: 22px;
+  display: flex;
+  align-items: center;
+}
+
+.xp-start-button:hover {
+  background: linear-gradient(to bottom, #4a7bc5 0%, #2d5f9a 100%);
+}
+
+.xp-start-button:active {
+  border-top-color: var(--xp-dark-gray);
+  border-left-color: var(--xp-dark-gray);
+  border-bottom-color: var(--xp-white);
+  border-right-color: var(--xp-white);
+}
+
+.xp-clock {
+  background: var(--xp-gray);
+  border: 1px solid var(--xp-dark-gray);
+  border-top-color: var(--xp-white);
+  border-left-color: var(--xp-white);
+  padding: 2px 6px;
+  margin: 2px;
+  font-size: 11px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  min-width: 80px;
+}
+
+/* Windows XP Start Menu */
+.xp-start-menu {
+  position: fixed;
+  bottom: 30px;
+  left: 0;
+  width: 200px;
+  background: var(--xp-gray);
+  border: 2px solid var(--xp-dark-gray);
+  border-top-color: var(--xp-white);
+  border-left-color: var(--xp-white);
+  box-shadow: 2px -2px 4px rgba(0, 0, 0, 0.3);
+  z-index: 999;
+}
+
+.xp-start-menu-item {
+  padding: 4px 8px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--xp-dark-gray);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.xp-start-menu-item:hover {
+  background: var(--xp-blue);
+  color: var(--xp-white);
+}
+
+.xp-start-menu-item:last-child {
+  border-bottom: none;
+}
+
+/* Window animations */
+@keyframes windowAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.xp-window.appearing {
+  animation: windowAppear 0.3s ease-out;
+}
+
+/* Desktop icon animations */
+@keyframes iconBounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-5px);
+  }
+  60% {
+    transform: translateY(-3px);
+  }
+}
+
+.xp-desktop-icon:hover {
+  animation: iconBounce 0.6s ease-in-out;
+}
+
+/* Start menu animations */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.xp-start-menu {
+  animation: slideUp 0.2s ease-out;
+}
+
+/* Taskbar button hover effects */
+.xp-taskbar button:hover {
+  transform: translateY(-1px);
+  transition: transform 0.1s ease;
+}
+
+/* Loading animation for desktop */
+@keyframes desktopLoad {
+  from {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.xp-desktop-loading {
+  animation: desktopLoad 1s ease-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .xp-desktop-icon {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .xp-icon-image {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .xp-icon-text {
+    font-size: 10px;
+  }
+  
+  .xp-taskbar {
+    height: 40px;
+  }
+  
+  .xp-start-button,
+  .xp-clock {
+    height: 32px;
+    font-size: 12px;
+  }
+  
+  .xp-start-menu {
+    width: 180px;
+  }
+  
+  .xp-window.maximized {
+    height: calc(100vh - 40px) !important;
+  }
 }
