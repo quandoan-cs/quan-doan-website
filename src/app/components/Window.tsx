@@ -39,38 +39,48 @@ const Window = ({
 
   return (
     <div className={`xp-window h-full w-full ${isMinimized ? 'minimized' : ''} ${isMaximized ? 'maximized' : ''} ${isAppearing ? 'appearing' : ''}`}>
-      <div className="xp-titlebar" onMouseDown={onMouseDown}>
-        <span>{title}</span>
-        <div className="flex gap-1">
-          {onMinimize && (
-            <button
-              className="w-4 h-4 bg-yellow-500 border border-yellow-600 flex items-center justify-center text-white text-xs font-bold hover:bg-yellow-600"
-              onClick={handleMinimize}
-              title="Minimize"
-            >
-              _
-            </button>
-          )}
-          {onMaximize && (
-            <button
-              className="w-4 h-4 bg-green-500 border border-green-600 flex items-center justify-center text-white text-xs font-bold hover:bg-green-600"
-              onClick={handleMaximize}
-              title="Maximize"
-            >
-              □
-            </button>
-          )}
-          <button
-            className="w-4 h-4 bg-red-500 border border-red-600 flex items-center justify-center text-white text-xs font-bold hover:bg-red-600"
-            onClick={onClose}
-            title="Close"
-          >
-            ×
-          </button>
+      {/* Window border - outer raised border */}
+      <div className="xp-window-outer-border">
+        {/* Window border - inner raised border */}
+        <div className="xp-window-inner-border">
+          {/* Title bar */}
+          <div className="xp-titlebar" onMouseDown={onMouseDown}>
+            <div className="xp-titlebar-content">
+              <span className="xp-titlebar-text">{title}</span>
+              <div className="xp-window-controls">
+                {onMinimize && (
+                  <button
+                    className="xp-window-control xp-minimize-btn"
+                    onClick={handleMinimize}
+                    title="Minimize"
+                  >
+                    _
+                  </button>
+                )}
+                {onMaximize && (
+                  <button
+                    className="xp-window-control xp-maximize-btn"
+                    onClick={handleMaximize}
+                    title="Maximize"
+                  >
+                    □
+                  </button>
+                )}
+                <button
+                  className="xp-window-control xp-close-btn"
+                  onClick={onClose}
+                  title="Close"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+          </div>
+          {/* Window content */}
+          <div className="xp-window-content">
+            {children}
+          </div>
         </div>
-      </div>
-      <div className="xp-window-content h-full overflow-auto">
-        {children}
       </div>
     </div>
   );

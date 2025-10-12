@@ -53,12 +53,12 @@ const Desktop = ({ onIconClick }: DesktopProps) => {
     <div 
       className="h-screen w-screen relative xp-desktop-loading" 
       style={{ 
-        background: 'linear-gradient(45deg, #008080 0%, #004040 100%)',
-        backgroundImage: `
-          radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
-          radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
-          radial-gradient(circle at 40% 60%, rgba(255,255,255,0.05) 0%, transparent 50%)
-        `
+        backgroundImage: 'url(/images/wallpapers/background.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed',
+        minHeight: '100vh'
       }}
       onContextMenu={handleContextMenu}
       onClick={() => setContextMenu(null)}
@@ -81,17 +81,6 @@ const Desktop = ({ onIconClick }: DesktopProps) => {
         </div>
       ))}
       
-      {/* Windows XP style desktop pattern overlay */}
-      <div 
-        className="absolute inset-0 opacity-10"
-        style={{
-          backgroundImage: `
-            linear-gradient(90deg, transparent 98%, rgba(255,255,255,0.1) 100%),
-            linear-gradient(0deg, transparent 98%, rgba(255,255,255,0.1) 100%)
-          `,
-          backgroundSize: '20px 20px'
-        }}
-      />
 
       {/* Context Menu */}
       {contextMenu && (
@@ -107,4 +96,3 @@ const Desktop = ({ onIconClick }: DesktopProps) => {
 };
 
 export default Desktop;
-

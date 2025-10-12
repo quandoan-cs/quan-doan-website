@@ -28,17 +28,27 @@ export default function Home() {
 
   const openWindow = (type: string, title: string) => {
     soundEffects.playWindowOpen();
+    
+    // Center the window on screen
+    const centerX = (window.innerWidth - 600) / 2;
+    const centerY = (window.innerHeight - 400) / 2;
+    
+    // Close all other windows and open only the new one
     const newWindow = {
       id: Date.now(),
       type,
       title,
-      x: Math.random() * 200 + 100,
-      y: Math.random() * 100 + 50,
+      x: Math.max(0, centerX),
+      y: Math.max(0, centerY),
       width: 600,
       height: 400,
-      zIndex: windows.length + 1,
+      zIndex: 1,
+      isMinimized: false,
+      isMaximized: false
     };
-    setWindows([...windows, newWindow]);
+    
+    // Replace all windows with just the new one
+    setWindows([newWindow]);
     setStartMenuOpen(false);
   };
 
@@ -51,6 +61,16 @@ export default function Home() {
     setWindows(windows.map(window => 
       window.id === id ? { ...window, ...updates } : window
     ));
+  };
+
+  const handleLogOff = () => {
+    // Log off functionality - placeholder for now
+    console.log('Log Off clicked');
+  };
+
+  const handleShutdown = () => {
+    // Close the browser/tab
+    window.close();
   };
 
   if (!isLoaded) {
@@ -66,7 +86,7 @@ export default function Home() {
   }
 
   return (
-    <div className="h-screen w-screen overflow-hidden relative">
+    <div className="h-screen w-screen overflow-hidden relative" style={{ background: 'transparent' }}>
       <Desktop onIconClick={openWindow} />
       <WindowManager 
         windows={windows}
@@ -74,7 +94,7 @@ export default function Home() {
         onUpdateWindow={updateWindow}
       />
       <Taskbar onStartClick={toggleStartMenu} />
-      {startMenuOpen && <StartMenu onItemClick={openWindow} />}
+      {startMenuOpen && <StartMenu onItemClick={openWindow} onLogOff={handleLogOff} onShutdown={handleShutdown} />}
     </div>
   );
 }

@@ -2,14 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Windows XP Color Scheme */
+/* Windows XP Color Scheme - Exact colors from the images */
 :root {
-  --xp-blue: #0054e3;
-  --xp-light-blue: #316ac5;
-  --xp-dark-blue: #003399;
+  --xp-blue: #316ac5;
+  --xp-light-blue: #4a7bc5;
+  --xp-dark-blue: #1f4f8a;
+  --xp-darker-blue: #003399;
   --xp-gray: #c0c0c0;
   --xp-dark-gray: #808080;
+  --xp-darker-gray: #404040;
   --xp-light-gray: #e1e1e1;
+  --xp-lighter-gray: #f0f0f0;
   --xp-white: #ffffff;
   --xp-black: #000000;
   --xp-taskbar: #c0c0c0;
@@ -19,16 +22,31 @@
   --xp-titlebar: linear-gradient(to bottom, #316ac5 0%, #1f4f8a 100%);
   --xp-titlebar-text: #ffffff;
   --xp-desktop-bg: #008080;
+  --xp-button-bg: #c0c0c0;
+  --xp-button-border: #808080;
+  --xp-button-highlight: #ffffff;
+  --xp-button-shadow: #404040;
 }
 
-body {
+* {
+  box-sizing: border-box;
+}
+
+html, body {
   margin: 0;
   padding: 0;
+  height: 100%;
+  width: 100%;
   font-family: 'Tahoma', 'Arial', sans-serif;
   font-size: 11px;
-  background: var(--xp-desktop-bg);
+  background: transparent;
   overflow: hidden;
   user-select: none;
+}
+
+#__next {
+  height: 100vh;
+  width: 100vw;
 }
 
 /* Windows XP Scrollbar */
@@ -56,14 +74,17 @@ body {
 
 /* Windows XP Button Styles */
 .xp-button {
-  background: var(--xp-gray);
-  border: 1px solid var(--xp-dark-gray);
-  border-top-color: var(--xp-white);
-  border-left-color: var(--xp-white);
+  background: var(--xp-button-bg);
+  border: 1px solid var(--xp-button-border);
+  border-top-color: var(--xp-button-highlight);
+  border-left-color: var(--xp-button-highlight);
+  border-bottom-color: var(--xp-button-shadow);
+  border-right-color: var(--xp-button-shadow);
   padding: 2px 8px;
   font-size: 11px;
   cursor: pointer;
   outline: none;
+  font-family: 'Tahoma', 'Arial', sans-serif;
 }
 
 .xp-button:hover {
@@ -71,24 +92,40 @@ body {
 }
 
 .xp-button:active {
-  border-top-color: var(--xp-dark-gray);
-  border-left-color: var(--xp-dark-gray);
-  border-bottom-color: var(--xp-white);
-  border-right-color: var(--xp-white);
+  border-top-color: var(--xp-button-shadow);
+  border-left-color: var(--xp-button-shadow);
+  border-bottom-color: var(--xp-button-highlight);
+  border-right-color: var(--xp-button-highlight);
 }
 
 .xp-button:focus {
   border: 1px dotted var(--xp-black);
 }
 
-/* Windows XP Window Styles */
+/* Windows XP Window Styles - Exact recreation */
 .xp-window {
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease-in-out;
+}
+
+.xp-window-outer-border {
   border: 2px solid var(--xp-dark-gray);
   border-top-color: var(--xp-white);
   border-left-color: var(--xp-white);
+  border-bottom-color: var(--xp-darker-gray);
+  border-right-color: var(--xp-darker-gray);
   background: var(--xp-window-bg);
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-  transition: all 0.2s ease-in-out;
+}
+
+.xp-window-inner-border {
+  border: 1px solid var(--xp-dark-gray);
+  border-top-color: var(--xp-white);
+  border-left-color: var(--xp-white);
+  border-bottom-color: var(--xp-darker-gray);
+  border-right-color: var(--xp-darker-gray);
+  background: var(--xp-window-bg);
 }
 
 .xp-window.minimized {
@@ -106,23 +143,112 @@ body {
   z-index: 1000 !important;
 }
 
+.xp-window.maximized .xp-window-outer-border {
+  border: none;
+  box-shadow: none;
+}
+
+.xp-window.maximized .xp-window-inner-border {
+  border: none;
+}
+
+/* Windows XP Title Bar - Exact styling */
 .xp-titlebar {
   background: var(--xp-titlebar);
   color: var(--xp-titlebar-text);
-  padding: 2px 4px;
-  font-size: 11px;
-  font-weight: bold;
+  height: 20px;
+  display: flex;
+  align-items: center;
   cursor: move;
+  border-bottom: 1px solid var(--xp-dark-gray);
+}
+
+.xp-titlebar-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 18px;
+  width: 100%;
+  padding: 0 4px;
+}
+
+.xp-titlebar-text {
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--xp-white);
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+.xp-window-controls {
+  display: flex;
+  gap: 2px;
+}
+
+.xp-window-control {
+  width: 16px;
+  height: 14px;
+  border: 1px solid var(--xp-button-border);
+  border-top-color: var(--xp-button-highlight);
+  border-left-color: var(--xp-button-highlight);
+  border-bottom-color: var(--xp-button-shadow);
+  border-right-color: var(--xp-button-shadow);
+  background: var(--xp-button-bg);
+  color: var(--xp-black);
+  font-size: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Tahoma', 'Arial', sans-serif;
+}
+
+.xp-window-control:hover {
+  background: var(--xp-light-gray);
+}
+
+.xp-window-control:active {
+  border-top-color: var(--xp-button-shadow);
+  border-left-color: var(--xp-button-shadow);
+  border-bottom-color: var(--xp-button-highlight);
+  border-right-color: var(--xp-button-highlight);
+}
+
+.xp-close-btn {
+  background: var(--xp-button-bg);
+}
+
+.xp-close-btn:hover {
+  background: #ff6b6b;
+  color: var(--xp-white);
+}
+
+.xp-minimize-btn {
+  background: var(--xp-button-bg);
+}
+
+.xp-minimize-btn:hover {
+  background: #ffd93d;
+  color: var(--xp-black);
+}
+
+.xp-maximize-btn {
+  background: var(--xp-button-bg);
+}
+
+.xp-maximize-btn:hover {
+  background: #6bcf7f;
+  color: var(--xp-white);
 }
 
 .xp-window-content {
-  padding: 4px;
   background: var(--xp-window-bg);
+  flex: 1;
   overflow: auto;
+  padding: 4px;
+  border-top: 1px solid var(--xp-white);
+  border-left: 1px solid var(--xp-white);
+  border-bottom: 1px solid var(--xp-dark-gray);
+  border-right: 1px solid var(--xp-dark-gray);
 }
 
 /* Windows XP Icon Styles */
@@ -352,4 +478,264 @@ body {
   .xp-window.maximized {
     height: calc(100vh - 40px) !important;
   }
+}
+
+/* ===================== */
+/* Windows XP Taskbar v2 */
+/* ===================== */
+
+/* Override base taskbar background to XP dark blue gradient */
+.xp-taskbar {
+  background: linear-gradient(to bottom, #2d5f9a 0%, #1f4f8a 100%);
+  display: flex;
+  align-items: center;
+  height: 30px;
+  padding: 0;
+}
+
+/* Green glossy Start button */
+.xp-start-button-green {
+  background: linear-gradient(to bottom, #48b000 0%, #2c9700 60%, #1c7a00 100%);
+  border: 1px solid #0e4f00;
+  border-top-color: #9ae36e;
+  border-left-color: #9ae36e;
+  color: #ffffff;
+  font-weight: bold;
+  font-family: 'Tahoma', 'Arial', sans-serif;
+  height: 26px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 0;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.3);
+  flex-shrink: 0;
+}
+
+/* Windows XP logo in Start button */
+.xp-windows-logo {
+  width: 16px;
+  height: 16px;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><rect x="0" y="0" width="7" height="7" fill="%23ffffff"/><rect x="8" y="0" width="7" height="7" fill="%23ffffff"/><rect x="0" y="8" width="7" height="7" fill="%23ffffff"/><rect x="8" y="8" width="7" height="7" fill="%23ffffff"/></svg>') no-repeat center;
+  background-size: 14px 14px;
+  flex-shrink: 0;
+}
+
+.xp-start-button-green:hover {
+  background: linear-gradient(to bottom, #54c507 0%, #2fa700 60%, #218600 100%);
+}
+
+.xp-start-button-green:active {
+  border-top-color: #0e4f00;
+  border-left-color: #0e4f00;
+  border-bottom-color: #9ae36e;
+  border-right-color: #9ae36e;
+}
+
+/* Task button area - dark blue to blend with bar */
+.xp-taskbar-tasks {
+  background: linear-gradient(to bottom, #2d5f9a 0%, #1f4f8a 100%);
+  border: 1px solid #123868;
+  border-top-color: #4a7bc5;
+  border-left-color: #4a7bc5;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px;
+  flex: 1;
+  margin: 0 2px;
+}
+
+/* Tray - light blue area with left divider */
+.xp-system-tray {
+  background: linear-gradient(to bottom, #cfe2ff 0%, #9cc3ff 100%);
+  border: 1px solid #6e9bd6;
+  border-top-color: #e3efff;
+  border-left-color: #e3efff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 6px;
+  min-width: 120px;
+  flex-shrink: 0;
+}
+
+.xp-system-tray .xp-clock {
+  background: transparent;
+  border: none;
+  height: auto;
+  margin: 0;
+  padding: 0 4px;
+}
+
+/* ========================= */
+/* XP Start Menu (two column) */
+/* ========================= */
+.xp-start-menu-two-col {
+  width: 430px;
+  display: grid;
+  grid-template-columns: 60% 40%;
+  grid-template-rows: auto auto;
+  overflow: hidden;
+  padding: 0;
+}
+
+.xp-start-left {
+  background: #f6f6f6;
+  border-right: 1px solid #a5a5a5;
+}
+
+.xp-start-right {
+  background: #dfe7f8;
+}
+
+.xp-start-header {
+  height: 46px;
+  background: linear-gradient(to bottom, #4a7bc5 0%, #1f4f8a 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  grid-column: 1 / -1;
+  font-weight: bold;
+}
+
+.xp-start-items {
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.xp-start-item,
+.xp-start-right-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.xp-start-item:hover {
+  background: #316ac5;
+  color: #fff;
+  border-color: #15407a;
+}
+
+.xp-start-right-item:hover {
+  background: rgba(255,255,255,0.6);
+}
+
+.xp-all-programs {
+  margin-top: 4px;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: bold;
+  border-top: 1px solid #c8c8c8;
+}
+
+.xp-start-bottom {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 8px;
+  background: #f0f0f0;
+  border-top: 1px solid #a5a5a5;
+}
+
+.xp-logoff,
+.xp-shutdown {
+  padding: 4px 8px;
+  border: 1px solid #808080;
+  border-top-color: #fff;
+  border-left-color: #fff;
+  border-bottom-color: #404040;
+  border-right-color: #404040;
+  color: #000;
+  font-weight: bold;
+}
+
+.xp-logoff {
+  background: linear-gradient(to bottom, #ffd27f 0%, #ff9f1a 100%);
+}
+
+.xp-shutdown {
+  background: linear-gradient(to bottom, #ff8f8f 0%, #d64747 100%);
+  color: #fff;
+}
+
+
+/* Windows XP Content Styling */
+.xp-window-content-inner {
+  padding: 8px;
+  background: var(--xp-window-bg);
+}
+
+.xp-content-section {
+  max-width: 100%;
+}
+
+.xp-content-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--xp-black);
+  margin-bottom: 4px;
+}
+
+.xp-content-subtitle {
+  font-size: 11px;
+  color: var(--xp-dark-gray);
+  margin-bottom: 16px;
+}
+
+.xp-content-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.xp-content-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.xp-content-heading {
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--xp-black);
+  margin-bottom: 2px;
+}
+
+.xp-content-text {
+  font-size: 11px;
+  color: var(--xp-black);
+  line-height: 1.4;
+}
+
+.xp-skills-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.xp-skill-tag {
+  background: var(--xp-button-bg);
+  border: 1px solid var(--xp-button-border);
+  border-top-color: var(--xp-button-highlight);
+  border-left-color: var(--xp-button-highlight);
+  border-bottom-color: var(--xp-button-shadow);
+  border-right-color: var(--xp-button-shadow);
+  padding: 2px 6px;
+  font-size: 10px;
+  color: var(--xp-black);
+  font-family: 'Tahoma', 'Arial', sans-serif;
+}
+
+.xp-skill-tag:hover {
+  background: var(--xp-light-gray);
 }

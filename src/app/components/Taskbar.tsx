@@ -35,20 +35,28 @@ const Taskbar = ({ onStartClick }: TaskbarProps) => {
 
   return (
     <div className="xp-taskbar">
+      {/* Start button (green) */}
       <button 
-        className="xp-start-button"
+        className="xp-start-button-green"
         onClick={onStartClick}
+        title="Start"
       >
-        <span className="mr-1">🪟</span>
-        Start
+        <div className="xp-windows-logo"></div>
+        start
       </button>
-      
-      <div className="flex-1" />
-      
-      <div className="xp-clock">
-        <div className="text-center">
-          <div className="font-bold">{formatTime(time)}</div>
-          <div className="text-xs">{formatDate(time)}</div>
+
+      {/* Task buttons area (dark blue) */}
+      <div className="xp-taskbar-tasks">
+        {/* task buttons would render here */}
+      </div>
+
+      {/* System tray (light blue) with clock */}
+      <div className="xp-system-tray">
+        <div className="xp-clock">
+          <div className="text-center">
+            <div className="font-bold">{formatTime(time)}</div>
+            <div className="text-xs">{formatDate(time)}</div>
+          </div>
         </div>
       </div>
     </div>

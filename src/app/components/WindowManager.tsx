@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Window from './Window';
 import AboutWindow from './windows/AboutWindow';
 import ResumeWindow from './windows/ResumeWindow';
@@ -18,38 +18,57 @@ const WindowManager = ({ windows, onCloseWindow, onUpdateWindow }: WindowManager
   const [draggedWindow, setDraggedWindow] = useState<number | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
+  useEffect(() => {
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      if (draggedWindow) {
+        const newX = e.clientX - dragOffset.x;
+        const newY = e.clientY - dragOffset.y;
+        
+        onUpdateWindow(draggedWindow, {
+          x: Math.max(0, Math.min(window.innerWidth - 300, newX)),
+          y: Math.max(0, Math.min(window.innerHeight - 100, newY))
+        });
+      }
+    };
+
+    const handleGlobalMouseUp = () => {
+      setDraggedWindow(null);
+    };
+
+    if (draggedWindow) {
+      document.addEventListener('mousemove', handleGlobalMouseMove);
+      document.addEventListener('mouseup', handleGlobalMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleGlobalMouseMove);
+      document.removeEventListener('mouseup', handleGlobalMouseUp);
+    };
+  }, [draggedWindow, dragOffset, onUpdateWindow]);
+
   const bringToFront = (id: number) => {
     const maxZIndex = Math.max(...windows.map(w => w.zIndex), 0);
     onUpdateWindow(id, { zIndex: maxZIndex + 1 });
   };
 
   const handleMouseDown = (e: React.MouseEvent, windowId: number) => {
+    // Only handle dragging on titlebar
+    const target = e.target as HTMLElement;
+    if (!target.closest('.xp-titlebar')) return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
     bringToFront(windowId);
     setDraggedWindow(windowId);
     
-    const rect = (e.target as HTMLElement).closest('.xp-window')?.getBoundingClientRect();
+    const rect = target.closest('.xp-window')?.getBoundingClientRect();
     if (rect) {
       setDragOffset({
         x: e.clientX - rect.left,
         y: e.clientY - rect.top
       });
     }
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (draggedWindow) {
-      const newX = e.clientX - dragOffset.x;
-      const newY = e.clientY - dragOffset.y;
-      
-      onUpdateWindow(draggedWindow, {
-        x: Math.max(0, Math.min(window.innerWidth - 300, newX)),
-        y: Math.max(0, Math.min(window.innerHeight - 100, newY))
-      });
-    }
-  };
-
-  const handleMouseUp = () => {
-    setDraggedWindow(null);
   };
 
   const minimizeWindow = (id: number) => {
@@ -62,6 +81,7 @@ const WindowManager = ({ windows, onCloseWindow, onUpdateWindow }: WindowManager
       if (window.isMaximized) {
         // Restore window
         onUpdateWindow(id, { 
+          isMinimized: false,
           isMaximized: false,
           x: window.originalX || 100,
           y: window.originalY || 100,
@@ -75,6 +95,7 @@ const WindowManager = ({ windows, onCloseWindow, onUpdateWindow }: WindowManager
           originalY: window.y,
           originalWidth: window.width,
           originalHeight: window.height,
+          isMinimized: false,
           isMaximized: true,
           x: 0,
           y: 0,
@@ -83,10 +104,6 @@ const WindowManager = ({ windows, onCloseWindow, onUpdateWindow }: WindowManager
         });
       }
     }
-  };
-
-  const restoreWindow = (id: number) => {
-    onUpdateWindow(id, { isMinimized: false });
   };
 
   const renderWindowContent = (window: any) => {
@@ -107,11 +124,7 @@ const WindowManager = ({ windows, onCloseWindow, onUpdateWindow }: WindowManager
   };
 
   return (
-    <div
-      className="fixed inset-0 pointer-events-none"
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-    >
+    <div className="fixed inset-0 pointer-events-none">
       {windows.map((window) => (
         <div
           key={window.id}
@@ -142,4 +155,3 @@ const WindowManager = ({ windows, onCloseWindow, onUpdateWindow }: WindowManager
 };
 
 export default WindowManager;
-

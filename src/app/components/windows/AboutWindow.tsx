@@ -1,52 +1,90 @@
 'use client';
 
-const AboutWindow = () => {
+import { useState } from 'react';
+
+interface WindowProps {
+  title: string;
+  children: React.ReactNode;
+  onClose: () => void;
+  onMinimize?: () => void;
+  onMaximize?: () => void;
+  onMouseDown: (e: React.MouseEvent) => void;
+  isMinimized?: boolean;
+  isMaximized?: boolean;
+}
+
+const Window = ({ 
+  title, 
+  children, 
+  onClose, 
+  onMinimize, 
+  onMaximize, 
+  onMouseDown,
+  isMinimized = false,
+  isMaximized = false
+}: WindowProps) => {
+  const [isAppearing, setIsAppearing] = useState(true);
+
+  const handleMinimize = () => {
+    if (onMinimize) {
+      onMinimize();
+    }
+  };
+
+  const handleMaximize = () => {
+    if (onMaximize) {
+      onMaximize();
+    }
+  };
+
   return (
-    <div className="p-4 space-y-4">
-      <div className="text-center">
-        <div className="text-6xl mb-4">👨‍💻</div>
-        <h1 className="text-2xl font-bold mb-2">About Me</h1>
-        <p className="text-sm text-gray-600">Your Name Here</p>
-      </div>
-      
-      <div className="space-y-3">
-        <div>
-          <h3 className="font-bold text-sm mb-1">Professional Summary</h3>
-          <p className="text-sm leading-relaxed">
-            I am a passionate software developer with expertise in modern web technologies. 
-            I love creating innovative solutions and bringing ideas to life through code.
-          </p>
-        </div>
-        
-        <div>
-          <h3 className="font-bold text-sm mb-1">Skills</h3>
-          <div className="flex flex-wrap gap-2">
-            {['JavaScript', 'TypeScript', 'React', 'Next.js', 'Node.js', 'Python', 'Git'].map((skill) => (
-              <span key={skill} className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
-                {skill}
-              </span>
-            ))}
+    <div className={`xp-window h-full w-full ${isMinimized ? 'minimized' : ''} ${isMaximized ? 'maximized' : ''} ${isAppearing ? 'appearing' : ''}`}>
+      {/* Window border - outer raised border */}
+      <div className="xp-window-outer-border">
+        {/* Window border - inner raised border */}
+        <div className="xp-window-inner-border">
+          {/* Title bar */}
+          <div className="xp-titlebar" onMouseDown={onMouseDown}>
+            <div className="xp-titlebar-content">
+              <span className="xp-titlebar-text">{title}</span>
+              <div className="xp-window-controls">
+                {onMinimize && (
+                  <button
+                    className="xp-window-control xp-minimize-btn"
+                    onClick={handleMinimize}
+                    title="Minimize"
+                  >
+                    _
+                  </button>
+                )}
+                {onMaximize && (
+                  <button
+                    className="xp-window-control xp-maximize-btn"
+                    onClick={handleMaximize}
+                    title="Maximize"
+                  >
+                    □
+                  </button>
+                )}
+                <button
+                  className="xp-window-control xp-close-btn"
+                  onClick={onClose}
+                  title="Close"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-        
-        <div>
-          <h3 className="font-bold text-sm mb-1">Education</h3>
-          <p className="text-sm">
-            Bachelor of Science in Computer Science<br />
-            University Name, Year
-          </p>
-        </div>
-        
-        <div>
-          <h3 className="font-bold text-sm mb-1">Interests</h3>
-          <p className="text-sm">
-            Web Development, Open Source, Photography, Gaming, Reading
-          </p>
+          {/* Window content */}
+          <div className="xp-window-content">
+            {children}
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default AboutWindow;
+export default Window;
 
