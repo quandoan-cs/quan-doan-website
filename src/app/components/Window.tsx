@@ -26,15 +26,12 @@ const Window = ({
   const [isAppearing, setIsAppearing] = useState(true);
 
   const handleMinimize = () => {
-    if (onMinimize) {
-      onMinimize();
-    }
+    console.log('Minimize clicked');
+    if (onMinimize) onMinimize();
   };
-
   const handleMaximize = () => {
-    if (onMaximize) {
-      onMaximize();
-    }
+    console.log('Maximize clicked');
+    if (onMaximize) onMaximize();
   };
 
   return (
@@ -68,7 +65,7 @@ const Window = ({
                 )}
                 <button
                   className="xp-window-control xp-close-btn"
-                  onClick={onClose}
+                  onClick={() => { console.log('Close clicked'); onClose(); }}
                   title="Close"
                 >
                   ×

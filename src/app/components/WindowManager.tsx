@@ -72,35 +72,36 @@ const WindowManager = ({ windows, onCloseWindow, onUpdateWindow }: WindowManager
   };
 
   const minimizeWindow = (id: number) => {
-    onUpdateWindow(id, { isMinimized: true });
+    const win = windows.find(w => w.id === id);
+    if (win) {
+      onUpdateWindow(id, { isMinimized: !win.isMinimized });
+    }
   };
 
   const maximizeWindow = (id: number) => {
-    const window = windows.find(w => w.id === id);
-    if (window) {
-      if (window.isMaximized) {
+    const win = windows.find(w => w.id === id);
+    if (win) {
+      if (win.isMaximized) {
         // Restore window
-        onUpdateWindow(id, { 
-          isMinimized: false,
+        onUpdateWindow(id, {
           isMaximized: false,
-          x: window.originalX || 100,
-          y: window.originalY || 100,
-          width: window.originalWidth || 600,
-          height: window.originalHeight || 400
+          x: win.originalX ?? win.x,
+          y: win.originalY ?? win.y,
+          width: win.originalWidth ?? win.width,
+          height: win.originalHeight ?? win.height,
         });
       } else {
         // Maximize window
         onUpdateWindow(id, {
-          originalX: window.x,
-          originalY: window.y,
-          originalWidth: window.width,
-          originalHeight: window.height,
-          isMinimized: false,
           isMaximized: true,
+          originalX: win.x,
+          originalY: win.y,
+          originalWidth: win.width,
+          originalHeight: win.height,
           x: 0,
           y: 0,
-          width: window.innerWidth,
-          height: window.innerHeight - 30
+          width: typeof window !== 'undefined' ? window.innerWidth : 600,
+          height: typeof window !== 'undefined' ? window.innerHeight - 30 : 400,
         });
       }
     }
@@ -124,18 +125,12 @@ const WindowManager = ({ windows, onCloseWindow, onUpdateWindow }: WindowManager
   };
 
   return (
-    <div className="fixed inset-0 pointer-events-none">
+    <div className="xp-window-manager">
       {windows.map((window) => (
         <div
           key={window.id}
-          className="absolute pointer-events-auto"
-          style={{
-            left: window.x,
-            top: window.y,
-            width: window.width,
-            height: window.height,
-            zIndex: window.zIndex
-          }}
+          className="xp-window-container pointer-events-auto"
+          style={{ left: window.x, top: window.y, width: window.width, height: window.height, zIndex: window.zIndex ?? 1000 }}
         >
           <Window
             title={window.title}

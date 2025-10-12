@@ -30,25 +30,33 @@ export default function Home() {
     soundEffects.playWindowOpen();
     
     // Center the window on screen
-    const centerX = (window.innerWidth - 600) / 2;
-    const centerY = (window.innerHeight - 400) / 2;
+    const width = 700;
+    const height = 500;
+    const centerX = window.innerWidth / 2 - width / 2;
+    const centerY = window.innerHeight / 2 - height / 2;
     
-    // Close all other windows and open only the new one
+    // Find the highest zIndex in current windows
+    const maxZIndex = windows.length > 0 ? Math.max(...windows.map(w => w.zIndex ?? 1)) : 1;
+
+    console.log(centerX, centerY);
     const newWindow = {
       id: Date.now(),
       type,
       title,
-      x: Math.max(0, centerX),
-      y: Math.max(0, centerY),
-      width: 600,
-      height: 400,
-      zIndex: 1,
+      x: centerX,
+      y: centerY,
+      width,
+      height,
+      zIndex: maxZIndex + 1,
       isMinimized: false,
       isMaximized: false
     };
     
     // Replace all windows with just the new one
-    setWindows([newWindow]);
+    setWindows(prev => [...prev, newWindow]);
+    console.log('window.innerWidth', window.innerWidth);
+    console.log('window.innerHeight', window.innerHeight);
+    console.log('centerX', centerX, 'centerY', centerY);
     setStartMenuOpen(false);
   };
 
@@ -58,9 +66,11 @@ export default function Home() {
   };
 
   const updateWindow = (id: number, updates: any) => {
-    setWindows(windows.map(window => 
-      window.id === id ? { ...window, ...updates } : window
-    ));
+    setWindows(prev =>
+      prev.map(window =>
+        window.id === id ? { ...window, ...updates } : window
+      )
+    );
   };
 
   const handleLogOff = () => {
@@ -86,7 +96,13 @@ export default function Home() {
   }
 
   return (
-    <div className="h-screen w-screen overflow-hidden relative" style={{ background: 'transparent' }}>
+    <div className="h-screen w-screen overflow-hidden relative" style={{
+      background: 'transparent',
+      width: '100vw',
+      height: '100vh',
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
       <Desktop onIconClick={openWindow} />
       <WindowManager 
         windows={windows}

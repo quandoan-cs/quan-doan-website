@@ -1,90 +1,27 @@
 'use client';
 
-import { useState } from 'react';
-
-interface WindowProps {
-  title: string;
-  children: React.ReactNode;
-  onClose: () => void;
-  onMinimize?: () => void;
-  onMaximize?: () => void;
-  onMouseDown: (e: React.MouseEvent) => void;
-  isMinimized?: boolean;
-  isMaximized?: boolean;
-}
-
-const Window = ({ 
-  title, 
-  children, 
-  onClose, 
-  onMinimize, 
-  onMaximize, 
-  onMouseDown,
-  isMinimized = false,
-  isMaximized = false
-}: WindowProps) => {
-  const [isAppearing, setIsAppearing] = useState(true);
-
-  const handleMinimize = () => {
-    if (onMinimize) {
-      onMinimize();
-    }
-  };
-
-  const handleMaximize = () => {
-    if (onMaximize) {
-      onMaximize();
-    }
-  };
-
-  return (
-    <div className={`xp-window h-full w-full ${isMinimized ? 'minimized' : ''} ${isMaximized ? 'maximized' : ''} ${isAppearing ? 'appearing' : ''}`}>
-      {/* Window border - outer raised border */}
-      <div className="xp-window-outer-border">
-        {/* Window border - inner raised border */}
-        <div className="xp-window-inner-border">
-          {/* Title bar */}
-          <div className="xp-titlebar" onMouseDown={onMouseDown}>
-            <div className="xp-titlebar-content">
-              <span className="xp-titlebar-text">{title}</span>
-              <div className="xp-window-controls">
-                {onMinimize && (
-                  <button
-                    className="xp-window-control xp-minimize-btn"
-                    onClick={handleMinimize}
-                    title="Minimize"
-                  >
-                    _
-                  </button>
-                )}
-                {onMaximize && (
-                  <button
-                    className="xp-window-control xp-maximize-btn"
-                    onClick={handleMaximize}
-                    title="Maximize"
-                  >
-                    □
-                  </button>
-                )}
-                <button
-                  className="xp-window-control xp-close-btn"
-                  onClick={onClose}
-                  title="Close"
-                >
-                  ×
-                </button>
-              </div>
-            </div>
-          </div>
-          {/* Window content */}
-          <div className="xp-window-content">
-            {children}
-          </div>
-        </div>
-      </div>
+const AboutWindow = () => (
+  <div className="p-8 text-xl leading-relaxed">
+    <div className="text-center mb-8">
+      <h1 className="text-3xl font-extrabold mb-3">👤 About Me</h1>
     </div>
-  );
-};
 
-export default Window;
+    <h2 className="font-extrabold text-2xl mb-3 mt-8">Bio</h2>
+    <p>
+      Hi! I’m Quan Doan, a software developer based in North Carolina. 
+      I graduated from Duke University with a degree in Computer Science. 
+      I love building with AI tools, learning new technologies, and exploring creative ways to solve problems.
+    </p>
 
+    <hr className="my-6 border-gray-400" />
+
+    <h2 className="font-extrabold text-2xl mb-3 mt-8">Why Windows XP?</h2>
+    <p>
+      My computer journey started with Windows XP. Its classic look and feel inspired 
+      my love for technology and design. I chose Windows XP for my portfolio because it’s nostalgic, 
+      fun, and represents my roots as a developer.
+    </p>
+  </div>
+);
+
+export default AboutWindow;

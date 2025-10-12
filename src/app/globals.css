@@ -15,13 +15,10 @@
   --xp-lighter-gray: #f0f0f0;
   --xp-white: #ffffff;
   --xp-black: #000000;
-  --xp-taskbar: #c0c0c0;
-  --xp-start-button: linear-gradient(to bottom, #316ac5 0%, #1f4f8a 100%);
   --xp-window-bg: #f0f0f0;
   --xp-window-border: #808080;
   --xp-titlebar: linear-gradient(to bottom, #316ac5 0%, #1f4f8a 100%);
   --xp-titlebar-text: #ffffff;
-  --xp-desktop-bg: #008080;
   --xp-button-bg: #c0c0c0;
   --xp-button-border: #808080;
   --xp-button-highlight: #ffffff;
@@ -32,17 +29,17 @@
   box-sizing: border-box;
 }
 
+
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  width: 100%;
   font-family: 'Tahoma', 'Arial', sans-serif;
-  font-size: 11px;
+  font-size: 12px;
   background: transparent;
-  overflow: hidden;
   user-select: none;
 }
+
 
 #__next {
   height: 100vh;
@@ -72,7 +69,10 @@ html, body {
   background: var(--xp-gray);
 }
 
-/* Windows XP Button Styles */
+/* =============================== */
+/* 🖱️ XP Button Styling            */
+/* =============================== */
+
 .xp-button {
   background: var(--xp-button-bg);
   border: 1px solid var(--xp-button-border);
@@ -80,16 +80,13 @@ html, body {
   border-left-color: var(--xp-button-highlight);
   border-bottom-color: var(--xp-button-shadow);
   border-right-color: var(--xp-button-shadow);
-  padding: 2px 8px;
-  font-size: 11px;
-  cursor: pointer;
-  outline: none;
+  padding: 3px 10px;
+  font-size: 12px;
   font-family: 'Tahoma', 'Arial', sans-serif;
+  cursor: pointer;
 }
 
-.xp-button:hover {
-  background: var(--xp-light-gray);
-}
+.xp-button:hover { background: var(--xp-light-gray); }
 
 .xp-button:active {
   border-top-color: var(--xp-button-shadow);
@@ -106,7 +103,68 @@ html, body {
 .xp-window {
   display: flex;
   flex-direction: column;
+  background: var(--xp-window-bg);
+  border: 2px solid var(--xp-dark-gray);
+  border-top-color: var(--xp-white);
+  border-left-color: var(--xp-white);
+  border-bottom-color: var(--xp-darker-gray);
+  border-right-color: var(--xp-darker-gray);
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
   transition: all 0.2s ease-in-out;
+  max-width: 800px;
+  margin: 0 auto;
+  pointer-events: auto !important;
+}
+
+.xp-window-container {
+  position: absolute;
+}
+
+.xp-window-manager {
+  z-index: 2000 !important;
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+/* =============================== */
+/* ✨ XP Text & Lists              */
+/* =============================== */
+
+.xp-window h1 {
+  font-size: 1.875rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+}
+
+.xp-window h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--xp-darker-blue);
+  border-bottom: 1px solid var(--xp-light-blue);
+  padding-bottom: 2px;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.xp-window p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
+}
+
+.xp-window ul {
+  list-style-type: disc;
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.xp-window li {
+  margin-bottom: 0.4rem;
+}
+
+.xp-window li b {
+  color: var(--xp-darker-blue);
+  font-weight: bold;
 }
 
 .xp-window-outer-border {
@@ -152,15 +210,21 @@ html, body {
   border: none;
 }
 
-/* Windows XP Title Bar - Exact styling */
+
+/* =============================== */
+/* 💠 XP Title Bar                 */
+/* =============================== */
+
 .xp-titlebar {
   background: var(--xp-titlebar);
   color: var(--xp-titlebar-text);
-  height: 20px;
+  height: 22px;
   display: flex;
   align-items: center;
-  cursor: move;
+  justify-content: space-between;
   border-bottom: 1px solid var(--xp-dark-gray);
+  padding: 0 4px;
+  user-select: none;
 }
 
 .xp-titlebar-content {
@@ -168,14 +232,12 @@ html, body {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 0 4px;
 }
 
 .xp-titlebar-text {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: bold;
-  color: var(--xp-white);
-  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.6);
 }
 
 .xp-window-controls {
@@ -184,8 +246,8 @@ html, body {
 }
 
 .xp-window-control {
-  width: 16px;
-  height: 14px;
+  width: 18px;
+  height: 16px;
   border: 1px solid var(--xp-button-border);
   border-top-color: var(--xp-button-highlight);
   border-left-color: var(--xp-button-highlight);
@@ -199,12 +261,11 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
+  line-height: 1;
   font-family: 'Tahoma', 'Arial', sans-serif;
 }
 
-.xp-window-control:hover {
-  background: var(--xp-light-gray);
-}
+.xp-window-control:hover { background: var(--xp-light-gray); }
 
 .xp-window-control:active {
   border-top-color: var(--xp-button-shadow);
@@ -217,38 +278,39 @@ html, body {
   background: var(--xp-button-bg);
 }
 
-.xp-close-btn:hover {
-  background: #ff6b6b;
-  color: var(--xp-white);
+.xp-close-btn:hover { 
+  background: #ff6b6b; 
+  color: white; 
 }
 
 .xp-minimize-btn {
   background: var(--xp-button-bg);
 }
 
-.xp-minimize-btn:hover {
-  background: #ffd93d;
-  color: var(--xp-black);
+.xp-minimize-btn:hover { 
+  background: #ffed85; 
 }
 
 .xp-maximize-btn {
   background: var(--xp-button-bg);
 }
 
-.xp-maximize-btn:hover {
-  background: #6bcf7f;
-  color: var(--xp-white);
+.xp-maximize-btn:hover { 
+  background: #7cff7c; 
 }
+
+/* =============================== */
+/* 📄 XP Window Content Area       */
+/* =============================== */
 
 .xp-window-content {
   background: var(--xp-window-bg);
-  flex: 1;
-  overflow: auto;
-  padding: 4px;
   border-top: 1px solid var(--xp-white);
   border-left: 1px solid var(--xp-white);
   border-bottom: 1px solid var(--xp-dark-gray);
   border-right: 1px solid var(--xp-dark-gray);
+  padding: 12px 16px;
+  overflow-y: auto;
 }
 
 /* Windows XP Icon Styles */
@@ -443,6 +505,7 @@ html, body {
 
 .xp-desktop-loading {
   animation: desktopLoad 1s ease-out;
+  z-index: 0;
 }
 
 /* Responsive adjustments */
@@ -738,4 +801,11 @@ html, body {
 
 .xp-skill-tag:hover {
   background: var(--xp-light-gray);
+}
+
+.xp-window,
+.xp-window-content,
+.xp-window-controls,
+.xp-window-control {
+  pointer-events: auto !important;
 }

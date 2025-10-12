@@ -1,82 +1,74 @@
 'use client';
 
-const ResumeWindow = () => {
-  return (
-    <div className="p-4 space-y-4">
-      <div className="text-center mb-6">
-        <h1 className="text-xl font-bold mb-2">📄 Resume</h1>
-        <button className="xp-button">
-          Download PDF
-        </button>
-      </div>
-      
-      <div className="space-y-4">
-        <div>
-          <h3 className="font-bold text-sm mb-2 border-b border-gray-300 pb-1">Experience</h3>
-          <div className="space-y-3">
-            <div>
-              <div className="flex justify-between items-start">
-                <div>
-                  <h4 className="font-semibold text-sm">Software Developer</h4>
-                  <p className="text-xs text-gray-600">Company Name</p>
-                </div>
-                <span className="text-xs text-gray-500">2022 - Present</span>
-              </div>
-              <ul className="text-xs mt-1 ml-4 list-disc">
-                <li>Developed and maintained web applications using React and Node.js</li>
-                <li>Collaborated with cross-functional teams to deliver high-quality software</li>
-                <li>Implemented responsive designs and optimized application performance</li>
-              </ul>
-            </div>
-            
-            <div>
-              <div className="flex justify-between items-start">
-                <div>
-                  <h4 className="font-semibold text-sm">Junior Developer</h4>
-                  <p className="text-xs text-gray-600">Previous Company</p>
-                </div>
-                <span className="text-xs text-gray-500">2020 - 2022</span>
-              </div>
-              <ul className="text-xs mt-1 ml-4 list-disc">
-                <li>Built user interfaces with modern JavaScript frameworks</li>
-                <li>Participated in code reviews and agile development processes</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        
-        <div>
-          <h3 className="font-bold text-sm mb-2 border-b border-gray-300 pb-1">Technical Skills</h3>
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <div>
-              <strong>Frontend:</strong> React, Vue.js, TypeScript, HTML5, CSS3
-            </div>
-            <div>
-              <strong>Backend:</strong> Node.js, Python, Express.js, MongoDB
-            </div>
-            <div>
-              <strong>Tools:</strong> Git, Docker, AWS, VS Code
-            </div>
-            <div>
-              <strong>Other:</strong> Agile, Scrum, REST APIs
-            </div>
-          </div>
-        </div>
-        
-        <div>
-          <h3 className="font-bold text-sm mb-2 border-b border-gray-300 pb-1">Education</h3>
-          <div className="text-xs">
-            <div className="flex justify-between">
-              <span>Bachelor of Science in Computer Science</span>
-              <span>2020</span>
-            </div>
-            <p className="text-gray-600">University Name</p>
-          </div>
-        </div>
-      </div>
+const ResumeWindow = () => (
+  <div className="p-8 space-y-10 text-lg xp-window">
+    <div className="text-center mb-8">
+      <h1 className="text-3xl font-extrabold mb-3">📄 Resume</h1>
+      <a href="/QuanDoan_Resume.pdf" className="xp-button" download>
+        Download PDF
+      </a>
     </div>
-  );
-};
+
+    {/* Education */}
+    <section>
+      <h2 className="font-extrabold text-2xl mb-2">Education</h2>
+      <p>
+        <b>Duke University</b> — <b>B.A. in Computer Science</b><br />
+        Aug 2020 – May 2024, Durham, NC
+      </p>
+      <p>
+        <b>Relevant Coursework:</b> Algorithms, Data Structures, Computer Systems, 
+        Database Systems, Discrete Math, Regression Analysis, Multivariable Calculus, Data Science
+      </p>
+    </section>
+
+    {/* Skills */}
+    <section>
+      <h2 className="font-extrabold text-2xl mb-2 mt-6">Skills</h2>
+      <p>
+        <b>Languages & Tools:</b> Python, JavaScript, R, SQL, Pandas, VBA, Flask, MongoDB, Markdown, Git/GitLab<br />
+        <b>Technologies:</b> Visual Studio Code, Microsoft Azure, Windows 10/11, Active Directory, Microsoft 365, Office<br />
+        <b>AI Tools:</b> CoPilot, ChatGPT
+      </p>
+    </section>
+
+    {/* Experience */}
+    <section>
+      <h2 className="font-extrabold text-2xl mb-2 mt-6">Experience</h2>
+
+      <b>GCM Medical & OEM, Inc. — IT Administrator</b><br />
+      May 2025 – Present, Wilmington, NC
+      <ul className="list-disc ml-6">
+        <li>Manage <b>IT operations</b> for 350+ users across multiple sites, partnering with CIO, IT staff, and MSP.</li>
+        <li>Built <b>automation app</b> using Python, SQL, JavaScript, Epicor APIs to cut lookup time by <b>75%</b>.</li>
+        <li>Streamline <b>operations</b>, deploy/maintain hardware/software/networking, provide support, document solutions.</li>
+      </ul>
+
+      <b>Duke University Code+ Program — Software Engineer Intern</b><br />
+      May 2022 – Aug 2022, Durham, NC
+      <ul className="list-disc ml-6">
+        <li>Developed <b>NLP algorithm</b> to improve processing of 4,500+ grant proposals for Duke OR&I.</li>
+        <li><b>Optimized workflows</b>, reducing parsing time by <b>93%</b>.</li>
+        <li>Packaged algorithm into <b>web app</b> for document matching and summary.</li>
+        <li>Consulted with <b>project sponsors</b> and stakeholders.</li>
+      </ul>
+    </section>
+
+    {/* Leadership & Activities */}
+    <section>
+      <h2 className="font-extrabold text-2xl mb-2 mt-6">Leadership & Activities</h2>
+
+      <b>Siren Music Community — President</b><br />
+      Aug 2021 – May 2024, Durham, NC
+      <ul className="list-disc ml-6">
+        <li><b>Coordinated</b> meetings, events, and playlist sessions.</li>
+        <li><b>Mentored</b> members in music production projects.</li>
+        <li><b>Managed</b> organization’s budget and spending.</li>
+      </ul>
+
+      <b>LangDorm (Duke Living Group)</b>
+    </section>
+  </div>
+);
 
 export default ResumeWindow;
-
