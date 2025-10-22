@@ -1,29 +1,74 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import Window from './Window';
 import AboutWindow from './windows/AboutWindow';
 import ResumeWindow from './windows/ResumeWindow';
 import ProjectsWindow from './windows/ProjectsWindow';
 import ContactWindow from './windows/ContactWindow';
 import SettingsWindow from './windows/SettingsWindow';
+import type { WindowInfo, WindowState, WindowManagerContextType } from '../../types';
 
-interface WindowManagerProps {
-  windows: any[];
-  onCloseWindow: (id: number) => void;
-  onUpdateWindow: (id: number, updates: any) => void;
+const WindowManagerContext = createContext<WindowManagerContextType | undefined>(undefined);
+
+export const useWindowManager = () => {
+  const ctx = useContext(WindowManagerContext);
+  if (!ctx) throw new Error('useWindowManager must be used within WindowManagerProvider');
+  return ctx;
+};
+
+export function WindowManagerProvider({ children }: { children: React.ReactNode }) {
+  const [windows, setWindows] = useState<WindowState[]>([]);
+
+  const openWindow = (w: WindowInfo) => {
+    setWindows((prev) => [
+      ...prev,
+      {
+        ...w,
+        isOpen: true,
+        zIndex: (prev.length ? Math.max(...prev.map(p => p.zIndex ?? 0)) : 0) + 1,
+      },
+    ]);
+  };
+
+  const closeWindow = (id: string) => {
+    setWindows((prev) => prev.filter((x) => x.id !== id));
+  };
+
+  const focusWindow = (id: string) => {
+    setWindows((prev) =>
+      prev.map((w) =>
+        w.id === id ? { ...w, zIndex: Math.max(...prev.map(p => p.zIndex ?? 0)) + 1 } : w
+      )
+    );
+  };
+
+  const toggleMinimize = (id: string) => {
+    setWindows((prev) => prev.map((w) => (w.id === id ? { ...w, isMinimized: !w.isMinimized } : w)));
+  };
+
+  const ctx: WindowManagerContextType = { windows, openWindow, closeWindow, focusWindow, toggleMinimize };
+
+  return <WindowManagerContext.Provider value={ctx}>{children}</WindowManagerContext.Provider>;
 }
 
-const WindowManager = ({ windows, onCloseWindow, onUpdateWindow }: WindowManagerProps) => {
-  const [draggedWindow, setDraggedWindow] = useState<number | null>(null);
+// Updated prop types (use WindowState instead of any)
+interface WindowProps {
+  windows: WindowState[];
+  onCloseWindow: (id: string) => void;
+  onUpdateWindow: (id: string, updates: Partial<WindowState>) => void;
+}
+
+const WindowManager = ({ windows, onCloseWindow, onUpdateWindow }: WindowProps) => {
+  const [draggedWindow, setDraggedWindow] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const handleGlobalMouseMove = (e: MouseEvent) => {
-      if (draggedWindow) {
+      if (draggedWindow !== null) {
         const newX = e.clientX - dragOffset.x;
         const newY = e.clientY - dragOffset.y;
-        
+
         onUpdateWindow(draggedWindow, {
           x: Math.max(0, Math.min(window.innerWidth - 300, newX)),
           y: Math.max(0, Math.min(window.innerHeight - 100, newY))
@@ -35,7 +80,7 @@ const WindowManager = ({ windows, onCloseWindow, onUpdateWindow }: WindowManager
       setDraggedWindow(null);
     };
 
-    if (draggedWindow) {
+    if (draggedWindow !== null) {
       document.addEventListener('mousemove', handleGlobalMouseMove);
       document.addEventListener('mouseup', handleGlobalMouseUp);
     }
@@ -46,22 +91,21 @@ const WindowManager = ({ windows, onCloseWindow, onUpdateWindow }: WindowManager
     };
   }, [draggedWindow, dragOffset, onUpdateWindow]);
 
-  const bringToFront = (id: number) => {
-    const maxZIndex = Math.max(...windows.map(w => w.zIndex), 0);
+  const bringToFront = (id: string) => {
+    const maxZIndex = windows.length ? Math.max(...windows.map(w => w.zIndex ?? 0)) : 0;
     onUpdateWindow(id, { zIndex: maxZIndex + 1 });
   };
 
-  const handleMouseDown = (e: React.MouseEvent, windowId: number) => {
-    // Only handle dragging on titlebar
+  const handleMouseDown = (e: React.MouseEvent, windowId: string) => {
     const target = e.target as HTMLElement;
     if (!target.closest('.xp-titlebar')) return;
-    
+
     e.preventDefault();
     e.stopPropagation();
-    
+
     bringToFront(windowId);
     setDraggedWindow(windowId);
-    
+
     const rect = target.closest('.xp-window')?.getBoundingClientRect();
     if (rect) {
       setDragOffset({
@@ -71,44 +115,8 @@ const WindowManager = ({ windows, onCloseWindow, onUpdateWindow }: WindowManager
     }
   };
 
-  const minimizeWindow = (id: number) => {
-    const win = windows.find(w => w.id === id);
-    if (win) {
-      onUpdateWindow(id, { isMinimized: !win.isMinimized });
-    }
-  };
-
-  const maximizeWindow = (id: number) => {
-    const win = windows.find(w => w.id === id);
-    if (win) {
-      if (win.isMaximized) {
-        // Restore window
-        onUpdateWindow(id, {
-          isMaximized: false,
-          x: win.originalX ?? win.x,
-          y: win.originalY ?? win.y,
-          width: win.originalWidth ?? win.width,
-          height: win.originalHeight ?? win.height,
-        });
-      } else {
-        // Maximize window
-        onUpdateWindow(id, {
-          isMaximized: true,
-          originalX: win.x,
-          originalY: win.y,
-          originalWidth: win.width,
-          originalHeight: win.height,
-          x: 0,
-          y: 0,
-          width: typeof window !== 'undefined' ? window.innerWidth : 600,
-          height: typeof window !== 'undefined' ? window.innerHeight - 30 : 400,
-        });
-      }
-    }
-  };
-
-  const renderWindowContent = (window: any) => {
-    switch (window.type) {
+  const renderWindowContent = (win: WindowState) => {
+    switch (win.type) {
       case 'about':
         return <AboutWindow />;
       case 'resume':
@@ -126,23 +134,22 @@ const WindowManager = ({ windows, onCloseWindow, onUpdateWindow }: WindowManager
 
   return (
     <div className="xp-window-manager">
-      {windows.map((window) => (
+      {windows.map((win) => (
         <div
-          key={window.id}
+          key={win.id}
           className="xp-window-container pointer-events-auto"
-          style={{ left: window.x, top: window.y, width: window.width, height: window.height, zIndex: window.zIndex ?? 1000 }}
+          style={{ left: win.x, top: win.y, width: win.width, height: win.height, zIndex: win.zIndex ?? 1000 }}
+          onMouseDown={(e) => handleMouseDown(e as unknown as React.MouseEvent, win.id)}
         >
           <Window
-            title={window.title}
-            onClose={() => onCloseWindow(window.id)}
-            onMinimize={() => minimizeWindow(window.id)}
-            onMaximize={() => maximizeWindow(window.id)}
-            onMouseDown={(e) => handleMouseDown(e, window.id)}
-            isMinimized={window.isMinimized}
-            isMaximized={window.isMaximized}
-          >
-            {renderWindowContent(window)}
-          </Window>
+            window={win}
+            onClose={() => onCloseWindow(win.id)}
+          />
+          {!win.isMinimized && (
+            <div className="xp-window-content">
+              {renderWindowContent(win)}
+            </div>
+          )}
         </div>
       ))}
     </div>

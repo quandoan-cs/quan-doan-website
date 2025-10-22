@@ -1,12 +1,21 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+import type { SoundMap } from '../../types';
+
 // Simple sound effects using Web Audio API
-class SoundEffects {
+export class SoundEffectsManager {
   private audioContext: AudioContext | null = null;
 
   constructor() {
     if (typeof window !== 'undefined') {
-      this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      type AudioCtor = typeof AudioContext;
+      const win = (window as unknown) as {
+        AudioContext?: AudioCtor;
+        webkitAudioContext?: AudioCtor;
+      };
+      const Ctor = win.AudioContext ?? win.webkitAudioContext;
+      this.audioContext = Ctor ? new Ctor() : null;
     }
   }
 
@@ -30,45 +39,68 @@ class SoundEffects {
   }
 
   playClick() {
-    // Short click sound
     this.playTone(800, 0.1, 'square');
   }
 
   playError() {
-    // Error sound
     this.playTone(400, 0.3, 'sawtooth');
     setTimeout(() => this.playTone(300, 0.2, 'sawtooth'), 100);
   }
 
   playSuccess() {
-    // Success sound
     this.playTone(600, 0.1, 'sine');
     setTimeout(() => this.playTone(800, 0.1, 'sine'), 50);
     setTimeout(() => this.playTone(1000, 0.1, 'sine'), 100);
   }
 
   playWindowOpen() {
-    // Window opening sound
     this.playTone(500, 0.2, 'triangle');
   }
 
   playWindowClose() {
-    // Window closing sound
     this.playTone(300, 0.15, 'triangle');
   }
 
   playStartup() {
-    // Startup sound sequence
     setTimeout(() => this.playTone(440, 0.2, 'sine'), 0);
     setTimeout(() => this.playTone(554, 0.2, 'sine'), 200);
     setTimeout(() => this.playTone(659, 0.3, 'sine'), 400);
   }
+
+  playBuffer(buffer: AudioBuffer) {
+    if (!this.audioContext) return;
+    const src = this.audioContext.createBufferSource();
+    src.buffer = buffer;
+    src.connect(this.audioContext.destination);
+    src.start();
+  }
+
+  async loadAndPlay(url: string) {
+    if (!this.audioContext) return;
+    const resp = await fetch(url);
+    const arrayBuffer = await resp.arrayBuffer();
+    const decoded = await this.audioContext.decodeAudioData(arrayBuffer);
+    this.playBuffer(decoded);
+  }
 }
 
-// Create a singleton instance
-export const soundEffects = new SoundEffects();
+export const soundEffects = new SoundEffectsManager();
+export const useSoundEffects = () => soundEffects;
 
-// Hook for using sound effects in components
-export const useSoundEffects = () => {
-  return soundEffects;
+type SoundEffectsProps = {
+  sounds: SoundMap;
+  volume?: number;
 };
+
+export default function SoundEffects({ sounds, volume = 1 }: SoundEffectsProps) {
+  const audiosRef = useRef<SoundMap>({});
+
+  useEffect(() => {
+    Object.keys(sounds).forEach((k) => {
+      if (!audiosRef.current[k]) audiosRef.current[k] = sounds[k];
+      audiosRef.current[k].volume = volume;
+    });
+  }, [sounds, volume]);
+
+  return null;
+}
