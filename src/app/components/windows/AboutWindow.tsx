@@ -1,6 +1,12 @@
-'use client';
+ 'use client';
 
-const AboutWindow = () => (
+import React from 'react';
+
+type AboutWindowProps = {
+  windowId?: string;
+};
+
+const AboutWindow: React.FC<AboutWindowProps> = (_props) => (
   <div className="p-8 text-xl leading-relaxed">
     <div className="text-center mb-8">
       <h1 className="text-3xl font-extrabold mb-3">👤 About Me</h1>

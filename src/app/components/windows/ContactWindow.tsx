@@ -1,6 +1,12 @@
-'use client';
+ 'use client';
 
-const ContactWindow = () => (
+import React from 'react';
+
+type ContactWindowProps = {
+  windowId?: string;
+};
+
+const ContactWindow: React.FC<ContactWindowProps> = (_props) => (
   <div className="p-6 space-y-8 text-lg">
     <div className="text-center mb-6">
       <h1 className="text-2xl font-bold mb-2">📧 Contact</h1>

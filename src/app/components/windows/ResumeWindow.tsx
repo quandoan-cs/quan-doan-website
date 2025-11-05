@@ -2,7 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 
-const ResumeWindow = () => {
+type ResumeWindowProps = {
+  windowId?: string;
+};
+
+const ResumeWindow: React.FC<ResumeWindowProps> = (_props) => {
   const [cols, setCols] = useState<number>(1);
 
   useEffect(() => {

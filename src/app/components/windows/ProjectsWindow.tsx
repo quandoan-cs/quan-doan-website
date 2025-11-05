@@ -1,6 +1,12 @@
-'use client';
+ 'use client';
 
-const ProjectsWindow = () => (
+import React from 'react';
+
+type ProjectsWindowProps = {
+  windowId?: string;
+};
+
+const ProjectsWindow: React.FC<ProjectsWindowProps> = (_props) => (
   <div className="p-6 space-y-8 text-lg">
     <div className="text-center mb-6">
       <h1 className="text-2xl font-bold mb-2">💻 Projects</h1>

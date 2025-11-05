@@ -1,0 +1,35 @@
+name: Azure Static Web Apps CI/CD - build & deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build and export (static)
+        run: npm run export
+
+      - name: Deploy to Azure Static Web Apps
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }} # set this in the repository secrets or connect the app through the Azure portal
+          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for PR comments and checks
+          action: 'upload'
+          app_location: '/' # App source code location
+          api_location: ''   # No Azure Functions in this app
+          output_location: 'out' # `next export` output folder
