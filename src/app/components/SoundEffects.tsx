@@ -1,41 +1,48 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+// Dev trace: log when this module is evaluated so we can detect hot reloads
+try { console.debug('[module-reload] SoundEffects module evaluated', new Date().toISOString()); } catch (e) {}
 import type { SoundMap } from '../../types';
 
 // Simple sound effects using Web Audio API
 export class SoundEffectsManager {
   private audioContext: AudioContext | null = null;
-
-  constructor() {
-    if (typeof window !== 'undefined') {
-      type AudioCtor = typeof AudioContext;
-      const win = (window as unknown) as {
-        AudioContext?: AudioCtor;
-        webkitAudioContext?: AudioCtor;
-      };
-      const Ctor = win.AudioContext ?? win.webkitAudioContext;
+  // Lazily create AudioContext on first user gesture to avoid automatic-start
+  private getAudioContext(): AudioContext | null {
+    if (this.audioContext) return this.audioContext;
+    if (typeof window === 'undefined') return null;
+    type AudioCtor = typeof AudioContext;
+    const win = (window as unknown) as {
+      AudioContext?: AudioCtor;
+      webkitAudioContext?: AudioCtor;
+    };
+    const Ctor = win.AudioContext ?? win.webkitAudioContext;
+    try {
       this.audioContext = Ctor ? new Ctor() : null;
+    } catch (err) {
+      this.audioContext = null;
     }
+    return this.audioContext;
   }
 
   private playTone(frequency: number, duration: number, type: OscillatorType = 'sine') {
-    if (!this.audioContext) return;
-
-    const oscillator = this.audioContext.createOscillator();
-    const gainNode = this.audioContext.createGain();
+    const ctx = this.getAudioContext();
+    if (!ctx) return;
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
 
     oscillator.connect(gainNode);
-    gainNode.connect(this.audioContext.destination);
+    gainNode.connect(ctx.destination);
 
     oscillator.frequency.value = frequency;
     oscillator.type = type;
 
-    gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + duration);
+    gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
 
-    oscillator.start(this.audioContext.currentTime);
-    oscillator.stop(this.audioContext.currentTime + duration);
+    oscillator.start(ctx.currentTime);
+    oscillator.stop(ctx.currentTime + duration);
   }
 
   playClick() {
@@ -68,19 +75,32 @@ export class SoundEffectsManager {
   }
 
   playBuffer(buffer: AudioBuffer) {
-    if (!this.audioContext) return;
-    const src = this.audioContext.createBufferSource();
+    const ctx = this.getAudioContext();
+    if (!ctx) return;
+    const src = ctx.createBufferSource();
     src.buffer = buffer;
-    src.connect(this.audioContext.destination);
+    src.connect(ctx.destination);
     src.start();
   }
 
   async loadAndPlay(url: string) {
-    if (!this.audioContext) return;
-    const resp = await fetch(url);
-    const arrayBuffer = await resp.arrayBuffer();
-    const decoded = await this.audioContext.decodeAudioData(arrayBuffer);
-    this.playBuffer(decoded);
+    const ctx = this.getAudioContext();
+    if (!ctx) return;
+    try {
+      const resp = await fetch(url);
+      if (!resp.ok) {
+        // avoid noisy exceptions when audio file is missing
+        // eslint-disable-next-line no-console
+        console.warn(`SoundEffectsManager: sound not found: ${url} (${resp.status})`);
+        return;
+      }
+      const arrayBuffer = await resp.arrayBuffer();
+      const decoded = await ctx.decodeAudioData(arrayBuffer);
+      this.playBuffer(decoded);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.warn('SoundEffectsManager: failed to load/play sound', url, err);
+    }
   }
 }
 

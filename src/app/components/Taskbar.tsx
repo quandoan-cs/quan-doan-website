@@ -1,12 +1,21 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from 'react';
+import { useWindowManager } from './WindowManager';
+import { soundEffects } from './SoundEffects';
+// Dev trace: log when this module is evaluated so we can detect hot reloads
+try { console.debug('[module-reload] Taskbar module evaluated', new Date().toISOString()); } catch (e) {}
 
 interface TaskbarProps {
-  onStartClick: () => void;
+  onStartClick?: () => void;
+  windows?: Array<{ id: string; title?: string; isMinimized?: boolean; active?: boolean; isMaximized?: boolean }>;
+  onQuickLaunch?: (type: string, title?: string) => void;
+  onFocus?: (id: string) => void;
+  onToggleMinimize?: (id: string) => void;
+  onClose?: (id: string) => void;
 }
 
-const Taskbar = ({ onStartClick }: TaskbarProps) => {
+const Taskbar = ({ onStartClick, windows = [], onQuickLaunch, onFocus, onToggleMinimize, onClose }: TaskbarProps) => {
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -33,21 +42,104 @@ const Taskbar = ({ onStartClick }: TaskbarProps) => {
     });
   };
 
+  const { openWindow } = useWindowManager();
+
   return (
     <div className="xp-taskbar">
-      {/* Start button (green) */}
-      <button 
-        className="xp-start-button-green"
-        onClick={onStartClick}
-        title="Start"
-      >
-        <div className="xp-windows-logo"></div>
-        start
-      </button>
+      {/* Start button (green) - flush to the very left, no label, inert click */}
+        <button
+          type="button"
+          className="xp-start-button-green"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.debug('Taskbar: start clicked - toggle Start menu');
+            try { soundEffects.playClick(); } catch {}
+            if (onStartClick) {
+              onStartClick();
+            } else {
+              // fallback: open start via WindowManager if parent didn't provide handler
+              try {
+                const { openWindow } = useWindowManager();
+                const width = 300;
+                const height = 380;
+                const x = 8;
+                const y = typeof window !== 'undefined' ? Math.max(8, window.innerHeight - height - 8) : undefined;
+                openWindow({ id: 'start', type: 'start', title: 'Start', width, height, x, y, showInTaskbar: false });
+              } catch (err) {
+                console.debug('Taskbar: no WindowManager available to open Start', err);
+              }
+            }
+          }}
+          title="Start"
+          aria-label="Start"
+        >
+          {/* Start icon - use provided SVG asset */}
+          <img src="/images/start-menu/xp-icon.svg" alt="Start" className="xp-start-icon" style={{ marginRight: 8 }} />
+          <span className="xp-start-label">Start</span>
+        </button>
+
+      {/* Quick Launch area (small icons) */}
+      <div className="xp-quick-launch">
+        <button type="button" className="xp-quick-btn" title="About" onClick={(e) => { e.preventDefault(); e.stopPropagation(); try { soundEffects.playClick(); } catch {} openWindow({ id: `about-${Date.now()}`, type: 'about', title: 'About', width: 520, height: 420 }); }}>
+          <span aria-hidden="true">🌐</span>
+        </button>
+        <button type="button" className="xp-quick-btn" title="Resume" onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          try { soundEffects.playClick(); } catch {}
+          // Open resume sized to fit inside the desktop and above taskbar
+          const maxW = typeof window !== 'undefined' ? Math.min(760, window.innerWidth - 40) : 700;
+          // reduce max height so resume doesn't extend past the taskbar on smaller screens
+          const maxH = typeof window !== 'undefined' ? Math.min(520, window.innerHeight - 120) : 480;
+          // center horizontally, align near top of desktop so header is at the top
+          const width = Math.max(520, Math.round(maxW));
+          const height = Math.max(360, Math.round(maxH));
+          const x = typeof window !== 'undefined' ? Math.round((window.innerWidth - width) / 2) : undefined;
+          const y = typeof window !== 'undefined' ? 8 : undefined;
+           openWindow({ id: `resume-${Date.now()}`, type: 'resume', title: 'Resume', width, height, x, y });
+        }}>
+          <span aria-hidden="true">📄</span>
+        </button>
+        <button type="button" className="xp-quick-btn" title="Projects" onClick={(e) => { e.preventDefault(); e.stopPropagation(); try { soundEffects.playClick(); } catch {} openWindow({ id: `projects-${Date.now()}`, type: 'projects', title: 'Projects', width: 900, height: 600 }); }}>
+          <span aria-hidden="true">🗂️</span>
+        </button>
+        <button type="button" className="xp-quick-btn" title="Contact" onClick={(e) => { e.preventDefault(); e.stopPropagation(); try { soundEffects.playClick(); } catch {} openWindow({ id: `contact-${Date.now()}`, type: 'contact', title: 'Contact', width: 520, height: 420 }); }}>
+          <span aria-hidden="true">✉️</span>
+        </button>
+        {/* Settings quick-launch removed per user request */}
+      </div>
 
       {/* Task buttons area (dark blue) */}
       <div className="xp-taskbar-tasks">
-        {/* task buttons would render here */}
+        {windows.map((w) => {
+          const type = w.id.split('-')[0] || 'app';
+          const iconSrc = `/images/icons/${type}.svg`;
+          return (
+            <button
+              type="button"
+              key={w.id}
+              className={`xp-task-pill ${w.isMinimized ? 'minimized' : ''} ${w.active ? 'active' : ''}`}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                try { soundEffects.playClick(); } catch {}
+                // If minimized, restore to original geometry. Otherwise focus.
+                if (w.isMinimized) {
+                  onToggleMinimize?.(w.id);
+                } else {
+                  onFocus?.(w.id);
+                }
+              }}
+              title={w.title}
+            >
+              {/* try to load a matching icon from /images/icons/<type>.svg; fallback to a square */}
+              <img src={iconSrc} className="xp-task-icon" alt="" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
+              <span className="xp-task-label">{w.title}</span>
+              <span className="xp-task-close" onClick={(e) => { e.stopPropagation(); onClose?.(w.id); }}>✕</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* System tray (light blue) with clock */}

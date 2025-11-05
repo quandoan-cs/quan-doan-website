@@ -1,78 +1,39 @@
-'use client';
+"use client";
 
-interface StartMenuProps {
-  onItemClick: (type: string, title: string) => void;
-  onLogOff?: () => void;
-  onShutdown?: () => void;
-}
+// Minimal Start menu: no external assets, no side-effectful handlers.
+// The menu shows a small dropdown that opens upward; buttons are inert (do nothing).
 
-const StartMenu = ({ onItemClick, onLogOff, onShutdown }: StartMenuProps) => {
-  const leftItems = [
-    { type: 'about', title: 'Internet', icon: '🌐' },
-    { type: 'contact', title: 'E-mail', icon: '✉️' },
-    { type: 'projects', title: 'Windows Media Player', icon: '🎵' },
-    { type: 'projects', title: 'MSN Explorer', icon: '🌀' },
-    { type: 'projects', title: 'Windows Movie Maker', icon: '🎬' },
-    { type: 'settings', title: 'Control Panel', icon: '⚙️' },
-    { type: 'projects', title: 'Paint', icon: '🎨' },
-    { type: 'projects', title: 'Solitaire', icon: '🃏' },
-  ];
-
-  const rightItems = [
-    { type: 'about', title: 'My Documents', icon: '📁' },
-    { type: 'projects', title: 'My Pictures', icon: '🖼️' },
-    { type: 'projects', title: 'My Music', icon: '🎼' },
-    { type: 'projects', title: 'My Computer', icon: '🖥️' },
-    { type: 'settings', title: 'Control Panel', icon: '⚙️' },
-    { type: 'projects', title: 'Help and Support', icon: '❓' },
-    { type: 'projects', title: 'Search', icon: '🔍' },
-    { type: 'projects', title: 'Run...', icon: '🏃' },
+const StartMenu = () => {
+  const items = [
+    { id: 'about', label: 'About' },
+    { id: 'resume', label: 'Resume' },
+    { id: 'projects', label: 'Projects' },
+    { id: 'contact', label: 'Contact' },
+    { id: 'settings', label: 'Settings' },
   ];
 
   return (
-    <div className="xp-start-menu xp-start-menu-two-col">
-      {/* Header */}
-      <div className="xp-start-header">
-        <span className="text-xl">👤</span>
-        <span>User</span>
-      </div>
+    <div className="xp-start-menu" role="menu" aria-label="Start menu" style={{ position: 'absolute', bottom: 48, left: 8, width: 220, background: 'white', border: '2px solid #0b3b8c', boxShadow: '0 4px 8px rgba(0,0,0,0.2)', borderRadius: 6 }}>
+      <div style={{ padding: 8, borderBottom: '1px solid #ccc', fontWeight: 700 }}>Start</div>
 
-      {/* Left column */}
-      <div className="xp-start-left">
-        <div className="xp-start-items">
-          {leftItems.map((item, idx) => (
-            <div key={idx} className="xp-start-item" onClick={() => onItemClick(item.type, item.title)}>
-              <span className="text-lg w-5 text-center">{item.icon}</span>
-              <span>{item.title}</span>
-            </div>
-          ))}
-          <div className="xp-all-programs">
-            <span>All Programs</span>
-            <span>▶</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Right column */}
-      <div className="xp-start-right">
-        <div className="xp-start-items">
-          {rightItems.map((item, idx) => (
-            <div key={idx} className="xp-start-right-item" onClick={() => onItemClick(item.type, item.title)}>
-              <span className="text-lg w-5 text-center">{item.icon}</span>
-              <span>{item.title}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Bottom bar */}
-      <div className="xp-start-bottom">
-        <button className="xp-logoff" onClick={onLogOff}>Log Off</button>
-        <button className="xp-shutdown" onClick={onShutdown}>Turn Off Computer</button>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        {items.map((it) => (
+          <button
+            key={it.id}
+            type="button"
+            className="xp-start-menu-item"
+            role="menuitem"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); /* inert for now */ }}
+            style={{ textAlign: 'left', padding: '8px 10px', background: 'transparent', border: 'none', cursor: 'pointer' }}
+          >
+            {it.label}
+          </button>
+        ))}
       </div>
     </div>
   );
 };
 
 export default StartMenu;
+
 

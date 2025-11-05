@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 export type SoundMap = Record<string, HTMLAudioElement>;
 
-export type WindowType = 'about' | 'resume' | 'projects' | 'contact' | 'settings' | 'custom';
+export type WindowType = 'about' | 'resume' | 'projects' | 'contact' | 'settings' | 'start' | 'custom';
 
 export type WindowInfo = {
   id: string;
@@ -13,6 +13,7 @@ export type WindowInfo = {
   y?: number;
   width?: number;
   height?: number;
+  showInTaskbar?: boolean;
 };
 
 export type WindowState = WindowInfo & {
@@ -35,4 +36,8 @@ export type WindowManagerContextType = {
   toggleMinimize: (id: string) => void;
   // optional helper to update a window
   updateWindow?: (id: string, updates: Partial<WindowState>) => void;
+  // id of the currently active (focused) window in this session
+  activeWindowId?: string;
+  // setter to mark a window active (optional)
+  setActiveWindow?: (id?: string) => void;
 };

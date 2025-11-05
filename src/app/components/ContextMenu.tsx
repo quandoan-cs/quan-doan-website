@@ -36,7 +36,7 @@ const ContextMenu = ({ x, y, onClose, onItemClick }: ContextMenuProps) => {
           <span>{item.label}</span>
         </div>
       ))}
-      <div className="border-t border-gray-400 my-1" />
+  <div className="xp-sep my-1" />
       <div
         className="px-3 py-1 text-xs cursor-pointer hover:bg-blue-500 hover:text-white flex items-center gap-2"
         onClick={() => handleItemClick('paste')}

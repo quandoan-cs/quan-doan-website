@@ -19,10 +19,10 @@ const Desktop = ({ onIconClick }: DesktopProps) => {
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
 
   const icons: DesktopIcon[] = [
-    { type: 'about', title: 'About Me', icon: '👤', x: 50, y: 50 },
-    { type: 'resume', title: 'Resume', icon: '📄', x: 150, y: 50 },
-    { type: 'projects', title: 'Projects', icon: '💻', x: 250, y: 50 },
-    { type: 'contact', title: 'Contact', icon: '📧', x: 350, y: 50 },
+    { type: 'about', title: 'About Me', icon: '/images/icons/about.svg', x: 50, y: 50 },
+    { type: 'resume', title: 'Resume', icon: '/images/icons/resume.svg', x: 150, y: 50 },
+    { type: 'projects', title: 'Projects', icon: '/images/icons/projects.svg', x: 250, y: 50 },
+    { type: 'contact', title: 'Contact', icon: '/images/icons/contact.svg', x: 350, y: 50 },
   ];
 
   const handleContextMenu = (e: React.MouseEvent) => {
@@ -72,8 +72,8 @@ const Desktop = ({ onIconClick }: DesktopProps) => {
           onClick={() => onIconClick(icon.type, icon.title)}
           onDoubleClick={() => onIconClick(icon.type, icon.title)}
         >
-          <div className="xp-icon-image flex items-center justify-center text-2xl">
-            {icon.icon}
+          <div className="xp-icon-image flex items-center justify-center">
+            <img src={icon.icon} alt={icon.title} style={{ width: 32, height: 32 }} />
           </div>
           <div className="xp-icon-text">
             {icon.title}

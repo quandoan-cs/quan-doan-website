@@ -22,7 +22,7 @@ const SettingsWindow = () => {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm">Wallpaper</span>
-              <button className="xp-button text-xs">Change</button>
+              <button type="button" className="xp-button text-xs">Change</button>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm">Screen Resolution</span>
@@ -87,13 +87,13 @@ const SettingsWindow = () => {
       </div>
       
       <div className="flex gap-2 pt-4 border-t border-gray-300">
-        <button className="xp-button">
+  <button type="button" className="xp-button">
           Apply
         </button>
-        <button className="xp-button">
+  <button type="button" className="xp-button">
           Cancel
         </button>
-        <button className="xp-button">
+  <button type="button" className="xp-button">
           Reset to Defaults
         </button>
       </div>

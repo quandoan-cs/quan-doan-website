@@ -13,7 +13,7 @@ const AboutWindow = () => (
       I love building with AI tools, learning new technologies, and exploring creative ways to solve problems.
     </p>
 
-    <hr className="my-6 border-gray-400" />
+  <div className="xp-sep my-6" />
 
     <h2 className="font-extrabold text-2xl mb-3 mt-8">Why Windows XP?</h2>
     <p>
