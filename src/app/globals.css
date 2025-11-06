@@ -165,13 +165,11 @@ html, body {
 }
 
 .xp-window-outer-border {
-  border: 2px solid var(--xp-dark-gray);
-  border-top-color: var(--xp-white);
-  border-left-color: var(--xp-white);
-  border-bottom-color: var(--xp-darker-gray);
-  border-right-color: var(--xp-darker-gray);
-  background: var(--xp-window-bg);
-  box-shadow: none;
+  /* wrapper used by older layouts — neutralize so it does not create a nested chrome */
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
 
 /* xp-window-inner-border removed from markup; keep selector in case older bundles reference it */
@@ -196,7 +194,7 @@ html, body {
   z-index: 1000 !important;
 }
 
-.xp-window.maximized .xp-window-outer-border {
+.xp-window.maximized {
   border: none;
   box-shadow: none;
 }
@@ -234,8 +232,10 @@ html, body {
 }
 
 .xp-titlebar-text {
-  font-size: 12px;
-  font-weight: bold;
+  display: flex;
+  align-items: center;
+  /* keep the clock contents right-aligned inside the tray box */
+  justify-content: flex-end;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.6);
 }
 
@@ -800,31 +800,57 @@ html, body {
 
 /* Tray - light blue area with left divider */
 .xp-system-tray {
-  background: linear-gradient(to bottom, #cfe2ff 0%, #9cc3ff 100%);
-  border: 1px solid #6e9bd6;
-  border-top-color: #e3efff;
-  border-left-color: #e3efff;
+  /* solid tray color matching requested hex and ensure text is readable */
+  background: #1187e3;
+  color: #ffffff;
+  border: 1px solid rgba(0,0,0,0.12);
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 2px 6px;
-  min-width: 120px;
+  /* fit inside the taskbar: use a fixed inner height slightly smaller than taskbar (30px) */
+  height: 26px;
+  /* keep left padding but reduce right padding so contents sit closer to the right edge */
+  /* reduce right padding and push tray to the far right edge of the taskbar */
+  padding: 0 2px 0 8px;
+  min-width: 80px;
+  margin-left: auto;
   flex-shrink: 0;
 }
 
 .xp-system-tray .xp-clock {
   background: transparent;
   border: none;
-  height: auto;
+  height: 100%;
   margin: 0;
-  padding: 0 4px;
+  /* nudge the clock down slightly so it doesn't touch the top edge; reduce right padding to sit near edge */
+  padding: 4px 2px 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* push inner content to the right */
+  color: #fff;
+}
+
+/* Reduce vertical gap between time and date inside the clock so the date sits closer */
+.xp-system-tray .xp-clock .text-center {
+  display: flex;
+  flex-direction: column;
+  /* right-align the inner stack so time/date hug the right edge */
+  align-items: flex-end;
+  gap: 0; /* remove extra gap from utility classes */
+  text-align: right;
+}
+
+.xp-system-tray .xp-clock .text-center .text-xs {
+  /* nudge the date up slightly */
+  margin-top: -2px;
+  line-height: 1;
 }
 
 /* ========================= */
 /* XP Start Menu (two column) */
 /* ========================= */
 .xp-start-menu-two-col {
-  width: 430px;
+  width: 440px;
   display: grid;
   grid-template-columns: 60% 40%;
   /* first row = header height (46px), second row fills remaining space */
@@ -905,30 +931,67 @@ html, body {
   grid-column: 1 / -1;
   display: flex;
   justify-content: space-between;
-  padding: 6px 8px;
-  background: #f0f0f0;
-  border-top: 1px solid #a5a5a5;
+  align-items: center;
+  /* make the footer top stripe the same height as the header (46px) */
+  height: 46px;
+  padding: 0 12px; /* keep horizontal padding but vertical centering via height */
+  box-sizing: border-box;
+  /* Match the header/titlebar colors for a cohesive footer bar */
+  background: linear-gradient(to bottom, #3a78e0 0%, #245DDA 100%);
+  color: #fff;
+  border-top: none;
 }
 
-.xp-logoff,
-.xp-shutdown {
-  padding: 4px 8px;
-  border: 1px solid #808080;
-  border-top-color: #fff;
-  border-left-color: #fff;
-  border-bottom-color: #404040;
-  border-right-color: #404040;
-  color: #000;
-  font-weight: bold;
+.xp-start-bottom-right {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.xp-power-icon {
+  /* make the icon itself the clickable target; remove boxed background */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
 }
 
 .xp-logoff {
-  background: linear-gradient(to bottom, #ffd27f 0%, #ff9f1a 100%);
+  /* remove boxed gradient; keep selector for legacy uses */
+  background: transparent !important;
+  color: #fff !important;
+  border: none !important;
 }
 
 .xp-shutdown {
-  background: linear-gradient(to bottom, #ff8f8f 0%, #d64747 100%);
+  background: transparent !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+.xp-power-icon img {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+}
+
+.xp-power-label {
   color: #fff;
+  font-weight: 600;
+  margin-left: 6px;
+}
+
+.xp-power-warning {
+  margin-left: 12px;
+  background: rgba(255, 240, 160, 0.95);
+  color: #3b2f00;
+  padding: 8px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  border: 1px solid rgba(255, 200, 80, 0.9);
 }
 
 

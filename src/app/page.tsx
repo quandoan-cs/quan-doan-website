@@ -100,10 +100,11 @@ export default function Page() {
             }
 
             // position the Start dropdown anchored to bottom-left (8px from left, above taskbar)
-            const width = 430; // match two-column XP start menu layout
+            const width = 440; // match two-column XP start menu layout and fill left gap
             const height = 360;
-            const x = 8;
-            const y = typeof window !== 'undefined' ? Math.max(8, window.innerHeight - height - 8) : undefined;
+            const x = 0; // flush to left edge
+            // align the Start menu so its bottom touches the top of the taskbar (taskbar = 30px)
+            const y = typeof window !== 'undefined' ? Math.max(8, window.innerHeight - height - 30) : undefined;
             openWindow({ id: 'start', type: 'start', title: 'Start', width, height, x, y, showInTaskbar: false });
             try { soundEffects.playWindowOpen(); } catch {}
           }}

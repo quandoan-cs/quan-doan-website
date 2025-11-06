@@ -31,7 +31,7 @@ const ResumeWindow: React.FC<ResumeWindowProps> = (_props) => {
             <h2 className="font-extrabold mb-1" style={{ fontSize: 14 }}>Experience</h2>
 
             <div style={{ marginBottom: 6 }}>
-              <b>GCM Medical & OEM, Inc. — IT Administrator</b><br />
+              <b>IT Administrator — GCM Medical & OEM, Inc.</b><br />
               <small>May 2025 – Present, Wilmington, NC</small>
               <ul className="list-none ml-0" style={{ marginTop: 6, paddingLeft: 0 }}>
                 <li style={{ marginBottom: 4 }}>Manage <b>IT operations</b> for 350+ users across multiple sites.</li>
@@ -41,7 +41,7 @@ const ResumeWindow: React.FC<ResumeWindowProps> = (_props) => {
             </div>
 
             <div style={{ marginBottom: 6 }}>
-              <b>Duke University Code+ Program — Software Engineer Intern</b><br />
+              <b>Software Engineer Intern — Duke Code+ Program</b><br />
               <small>May 2022 – Aug 2022, Durham, NC</small>
               <ul className="list-none ml-0" style={{ marginTop: 6, paddingLeft: 0 }}>
                 <li style={{ marginBottom: 4 }}>Developed <b>NLP algorithm</b> to improve processing of 4,500+ grant proposals for Duke OR&I.</li>
@@ -57,11 +57,11 @@ const ResumeWindow: React.FC<ResumeWindowProps> = (_props) => {
           <section>
             <h2 className="font-extrabold mb-1" style={{ fontSize: 14 }}>Education</h2>
             <p style={{ marginBottom: 6 }}>
-              <b>Duke University</b> — <b>B.A. in Computer Science</b><br />
+              <b>B.A. in Computer Science — Duke University</b><br />
               <small>Aug 2020 – May 2024, Durham, NC</small>
             </p>
             <p style={{ marginBottom: 8 }}>
-              <b>Relevant Coursework:</b> Algorithms, Data Structures, Computer Systems, Database Systems, Discrete Math, Regression Analysis, Multivariable Calculus, Data Science
+              <b>Relevant Coursework:</b> Algorithms, Data Structures, Computer Systems, Database Systems, Discrete Math, Regression Analysis, Multivariable Calculus
             </p>
           </section>
 

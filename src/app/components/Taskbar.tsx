@@ -36,9 +36,9 @@ const Taskbar = ({ onStartClick, windows = [], onQuickLaunch, onFocus, onToggleM
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', {
-      weekday: 'short',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
+      year: 'numeric'
     });
   };
 
@@ -61,10 +61,11 @@ const Taskbar = ({ onStartClick, windows = [], onQuickLaunch, onFocus, onToggleM
               // fallback: open start via WindowManager if parent didn't provide handler
               try {
                 const { openWindow } = useWindowManager();
-                const width = 300;
-                const height = 380;
-                const x = 8;
-                const y = typeof window !== 'undefined' ? Math.max(8, window.innerHeight - height - 8) : undefined;
+                const width = 440;
+                const height = 360;
+                const x = 0; // flush to left edge
+                // align the Start dropdown so it sits directly above the taskbar
+                const y = typeof window !== 'undefined' ? Math.max(8, window.innerHeight - height - 30) : undefined;
                 openWindow({ id: 'start', type: 'start', title: 'Start', width, height, x, y, showInTaskbar: false });
               } catch (err) {
                 console.debug('Taskbar: no WindowManager available to open Start', err);
@@ -81,8 +82,8 @@ const Taskbar = ({ onStartClick, windows = [], onQuickLaunch, onFocus, onToggleM
 
       {/* Quick Launch area (small icons) */}
       <div className="xp-quick-launch">
-        <button type="button" className="xp-quick-btn" title="About" onClick={(e) => { e.preventDefault(); e.stopPropagation(); try { soundEffects.playClick(); } catch {} openWindow({ id: `about-${Date.now()}`, type: 'about', title: 'About', width: 520, height: 420 }); }}>
-          <span aria-hidden="true">🌐</span>
+  <button type="button" className="xp-quick-btn" title="About" onClick={(e) => { e.preventDefault(); e.stopPropagation(); try { soundEffects.playClick(); } catch {} openWindow({ id: `about-${Date.now()}`, type: 'about', title: 'About', width: 600, height: 420 }); }}>
+          <img src="/images/icons/about.svg" alt="About" width={20} height={20} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
         </button>
         <button type="button" className="xp-quick-btn" title="Resume" onClick={(e) => {
           e.preventDefault();
@@ -99,15 +100,14 @@ const Taskbar = ({ onStartClick, windows = [], onQuickLaunch, onFocus, onToggleM
           const y = typeof window !== 'undefined' ? 8 : undefined;
            openWindow({ id: `resume-${Date.now()}`, type: 'resume', title: 'Resume', width, height, x, y });
         }}>
-          <span aria-hidden="true">📄</span>
+          <img src="/images/icons/resume.svg" alt="Resume" width={20} height={20} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
         </button>
-        <button type="button" className="xp-quick-btn" title="Projects" onClick={(e) => { e.preventDefault(); e.stopPropagation(); try { soundEffects.playClick(); } catch {} openWindow({ id: `projects-${Date.now()}`, type: 'projects', title: 'Projects', width: 900, height: 600 }); }}>
-          <span aria-hidden="true">🗂️</span>
+        <button type="button" className="xp-quick-btn" title="Projects" onClick={(e) => { e.preventDefault(); e.stopPropagation(); try { soundEffects.playClick(); } catch {} openWindow({ id: `projects-${Date.now()}`, type: 'projects', title: 'Projects', width: 600, height: 420 }); }}>
+          <img src="/images/icons/projects.svg" alt="Projects" width={20} height={20} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
         </button>
-        <button type="button" className="xp-quick-btn" title="Contact" onClick={(e) => { e.preventDefault(); e.stopPropagation(); try { soundEffects.playClick(); } catch {} openWindow({ id: `contact-${Date.now()}`, type: 'contact', title: 'Contact', width: 520, height: 420 }); }}>
-          <span aria-hidden="true">✉️</span>
+  <button type="button" className="xp-quick-btn" title="Contact" onClick={(e) => { e.preventDefault(); e.stopPropagation(); try { soundEffects.playClick(); } catch {} openWindow({ id: `contact-${Date.now()}`, type: 'contact', title: 'Contact', width: 600, height: 420 }); }}>
+          <img src="/images/icons/contact.svg" alt="Contact" width={20} height={20} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }} />
         </button>
-        {/* Settings quick-launch removed per user request */}
       </div>
 
       {/* Task buttons area (dark blue) */}
