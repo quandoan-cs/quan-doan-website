@@ -16,13 +16,22 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          # Next.js 16 requires Node >= 20.9.0 — use Node 20.x in CI
+          node-version: '20'
+
+      - name: Show Node version
+        run: node -v
 
       - name: Install dependencies
         run: npm ci
 
       - name: Build (Next.js static export)
         run: npm run build
+
+      - name: Show build output (debug)
+        run: |
+          echo "-- out/ listing --"
+          ls -la out || echo "out/ not found"
 
       - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
