@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
-    "export": "next export",
+  "build": "next build --turbopack",
+  "export": "next build",
     "start": "next start",
     "lint": "eslint"
   },

@@ -1,51 +1,12 @@
-name: Azure Static Web Apps CI/CD
+name: "Disabled: duplicate workflow (replaced by azure-static-web-apps-ashy-flower-032081f0f.yml)"
 
 on:
-  push:
-    branches:
-      - azure-build-deploy
+  workflow_dispatch: {}
 
 jobs:
-  build_and_deploy:
+  disabled:
     runs-on: ubuntu-latest
-
+    if: false
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          # Next.js 16 requires Node >= 20.9.0 — use Node 20.x in CI
-          node-version: '20'
-
-      - name: Show Node version
-        run: node -v
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build (Next.js static export)
-        run: |
-          npm run build
-          # produce a static export to `out/`
-          npm run export
-
-      - name: Show build output (debug)
-        run: |
-          echo "-- out/ listing --"
-          ls -la out || echo "out/ not found"
-
-      - name: Deploy to Azure Static Web Apps
-        if: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for GitHub integrations (required)
-          action: 'upload'
-          app_location: '.'
-          api_location: ''
-          output_location: 'out'
-          skip_app_build: true
-          # If the deployment token isn't present, skip the actual deploy step
-          skip_deploy_on_missing_secrets: true
+      - name: Disabled
+        run: echo "This file was replaced—use azure-static-web-apps-ashy-flower-032081f0f.yml as the active workflow."
