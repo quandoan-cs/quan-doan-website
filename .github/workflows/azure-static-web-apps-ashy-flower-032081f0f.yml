@@ -4,43 +4,60 @@ on:
   push:
     branches:
       - azure-build-deploy
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
-    branches:
-      - azure-build-deploy
 
 jobs:
-  build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+  build_and_deploy:
     runs-on: ubuntu-latest
-    name: Build and Deploy Job
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: true
-          lfs: false
-      - name: Build And Deploy
-        id: builddeploy
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ASHY_FLOWER_032081F0F }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
-          action: "upload"
-          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "src" # App source code path
-          api_location: "api" # Api source code path - optional
-          output_location: "out" # Built app content directory - optional
-          ###### End of Repository/Build Configurations ######
+    # Expose the Azure deploy token as a job env var so we can safely
+    # reference it in `if` expressions (referencing `secrets` directly in
+    # an `if` can cause workflow validation errors).
+    # Support both the standard secret name and the portal-generated one
+    # (AZURE_STATIC_WEB_APPS_API_TOKEN_ASHY_FLOWER_032081F0F) by falling
+    # back to the latter when the standard name isn't present.
+    env:
+      AZURE_STATIC_WEB_APPS_API_TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN || secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ASHY_FLOWER_032081F0F }}
 
-  close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    name: Close Pull Request Job
     steps:
-      - name: Close Pull Request
-        id: closepullrequest
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          # Next.js 16 requires Node >= 20.9.0 — use Node 20.x in CI
+          node-version: '20'
+
+      - name: Show Node version
+        run: node -v
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (Next.js static export)
+        run: |
+          # Next 16+ uses `next.config.(js|ts) -> output: 'export'`.
+          # Running `next build` will produce the static `out/` directory.
+          npm run build
+
+      - name: Show build output (debug)
+        run: |
+          echo "-- out/ listing --"
+          ls -la out || echo "out/ not found"
+
+      - name: Deploy to Azure Static Web Apps
+        if: ${{ env.AZURE_STATIC_WEB_APPS_API_TOKEN != '' }}
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ASHY_FLOWER_032081F0F }}
-          action: "close"
+          azure_static_web_apps_api_token: ${{ env.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for GitHub integrations (required)
+          action: 'upload'
+          # When skip_app_build is true, the action expects the built
+          # artifacts to already exist in `app_location`. We build to
+          # `out/` via `npm run build`, so point `app_location` there.
+          app_location: 'out'
+          api_location: ''
+          # We don't need to set output_location when uploading from the
+          # already-built app_location; leave it empty.
+          skip_app_build: true
+          # If the deployment token isn't present, the above `if` will
+          # prevent this step from running.

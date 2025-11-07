@@ -1,0 +1,12 @@
+name: "Disabled: duplicate workflow (replaced by azure-static-web-apps-ashy-flower-032081f0f.yml)"
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  disabled:
+    runs-on: ubuntu-latest
+    if: false
+    steps:
+      - name: Disabled
+        run: echo "This file was replaced—use azure-static-web-apps-ashy-flower-032081f0f.yml as the active workflow."
