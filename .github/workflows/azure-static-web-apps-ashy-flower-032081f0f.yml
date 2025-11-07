@@ -51,9 +51,13 @@ jobs:
           azure_static_web_apps_api_token: ${{ env.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for GitHub integrations (required)
           action: 'upload'
-          app_location: '.'
+          # When skip_app_build is true, the action expects the built
+          # artifacts to already exist in `app_location`. We build to
+          # `out/` via `npm run build`, so point `app_location` there.
+          app_location: 'out'
           api_location: ''
-          output_location: 'out'
+          # We don't need to set output_location when uploading from the
+          # already-built app_location; leave it empty.
           skip_app_build: true
           # If the deployment token isn't present, the above `if` will
           # prevent this step from running.
